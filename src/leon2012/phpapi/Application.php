@@ -8,6 +8,9 @@
 
 namespace leon2012\phpapi;
 
+use leon2012\phpapi\exceptions\CoreException;
+
+
 class Application 
 {
 
@@ -67,7 +70,7 @@ class Application
         } else {
             $format = "Call to undefined method {%s}";
             $message = sprintf($format, $name);
-            throw new exceptions\CoreException($message);
+            throw new CoreException($message);
         }
     }
 

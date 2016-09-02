@@ -18,7 +18,6 @@ abstract  class Collection implements \IteratorAggregate, \ArrayAccess, \Countab
     public function __construct()
     {
         $this->_data = [];
-        $this->initData();
     }
 
     abstract protected function initData();

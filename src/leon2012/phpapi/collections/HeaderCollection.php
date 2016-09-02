@@ -11,7 +11,7 @@ namespace leon2012\phpapi\collections;
 class HeaderCollection extends \leon2012\phpapi\Collection  
 {
     
-    protected  function initData()
+    public  function initData()
     {
         $headers = [];
         if (function_exists('getallheaders')) {

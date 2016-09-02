@@ -16,6 +16,8 @@ class HeaderCollectionTest extends PHPUnit_Framework_TestCase
     public function testSetGet()
     {
         $header = new HeaderCollection();
+        $header->initData();
+        
         $header->set('a', 'a');
         $header->set('b', 'b');
         $header->set('c', 'c');

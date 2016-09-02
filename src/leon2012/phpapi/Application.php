@@ -9,7 +9,7 @@
 namespace leon2012\phpapi;
 
 use leon2012\phpapi\exceptions\CoreException;
-
+use leon2012\phpapi\collections\ConfigCollection;
 
 class Application 
 {
@@ -17,6 +17,7 @@ class Application
     private static $_instance = null;
     private $_appPath;
     private $_data;
+    private $_config;
     public $request;
     public $response;
     public $loader;
@@ -57,6 +58,11 @@ class Application
     {
         $this->_appPath = $path;
         $this->loader->setBasePath($this->_appPath);
+    }
+
+    public function setConfig($config = [])
+    {
+        $this->_config = new ConfigCollection($config);
     }
 
     public function __call($name, $arguments) 

@@ -6,11 +6,15 @@
  * @version $Id$
  */
 
-class ClassName extends AnotherClass 
+namespace leon2012\phpapi;
+
+abstract class Controller 
 {
     
     public function __construct()
     {
         
     }
+
+    
 }

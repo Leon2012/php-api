@@ -6,23 +6,34 @@
  * @version $Id$
  */
 namespace leon2012\phpapi\collections;
-
+use leon2012\phpapi\exceptions\InvalidArgumentException;
 
 class ConfigCollection extends \leon2012\phpapi\Collection  
 {
 
-    private $_config;
-
     public function __construct($config = [])
     {
-        $this->_config = $config;
-    }
-
-    public  function initData()
-    {
-        foreach ($this->_config as $name => $value) {
+        foreach ($config as $name => $value) {
             $this->add($name, $value);
         }
-        $this->_config = null;
+    }
+
+    public function valid()
+    {
+        if (empty($this->id)) {
+            throw new InvalidArgumentException('Id is invalid');
+        }
+
+        if (empty($this->appPath)) {
+            throw new InvalidArgumentException('AppPath is invalid');
+        }
+
+        if (empty($this->appNamespace)) {
+            throw new InvalidArgumentException('AppNamespace is invalid');
+        }
+
+        if (empty($this->defaultRoute)) {
+            throw new InvalidArgumentException('DefaultRoute is invalid');
+        }
     }
 }

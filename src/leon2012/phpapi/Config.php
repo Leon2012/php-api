@@ -8,14 +8,16 @@
 
 namespace leon2012\phpapi;
 
-use leon2012\phpapi\CoreException;
+use leon2012\phpapi\exceptions\CoreException;
 
 class Config 
 {
-    public $id;
-	public $appPath;
-	public $appNamespace;
-
+    private $_id;
+	private $_appPath;
+	private $_controllerNamespace;
+    private $_defaultRoute;
+    private $_modules;
+    private $_data = [];
 	/**
 	 * init object
 	 * @param array $config [description]
@@ -32,9 +34,18 @@ class Config
      */
     public function fromArray($arr = [])
     {
-    	$this->id = isset($arr['id'])?$arr['id']:'';
- 		$this->appPath = isset($arr['appPath'])?$arr['appPath']:'';
- 		$this->appNamespace = isset($arr['appNamespace'])?$arr['appNamespace']:'';
+    	$this->_id = isset($arr['id'])?$arr['id']:'';
+ 		$this->_appPath = isset($arr['appPath'])?$arr['appPath']:'';
+ 		$this->_controllerNamespace = isset($arr['controllerNamespace'])?$arr['controllerNamespace']:'';
+        $this->_defaultRoute = isset($arr['defaultRoute'])?$arr['defaultRoute']:'';
+
+        $this->_modules = isset($arr['modules'])?$arr['modules']:[];
+        $this->_data = $arr;
+    }
+
+    public function toArray()
+    {
+        return $this->_data;
     }
 
     /**
@@ -43,10 +54,63 @@ class Config
      */
     public function valid()
     {
-    	if (empty($this->id)) {
+    	if (empty($this->_id)) {
     		throw new CoreException('Id is invalid');
     	}
 
-    	if (empty($this->appPath))
+    	if (empty($this->_appPath)) {
+            throw new CoreException('AppPath is invalid');
+        }
+
+        if (empty($this->_controllerNamespace)) {
+            throw new CoreException('ControllerNamespace is invalid');
+        }
+
+        if (empty($this->_defaultRoute)) {
+            throw new CoreException('DefaultRoute is invalid');
+        }
+    }
+
+    public function getId()
+    {
+        return $this->_id;
+    }
+
+    public function getAppPath()
+    {
+        return $this->_appPath;
+    }
+
+    public function getControllerNamespace()
+    {
+        return $this->_controllerNamespace;
+    }
+
+    public function getDefaultRoute()
+    {
+        return $this->_defaultRoute;
+    }
+
+    public function getModules()
+    {
+        return $this->_modules;
+    }
+
+    public function __get($name)
+    {
+        $func = 'get'.ucfirst($name);
+        if (method_exists($this, $func)) {
+            return $this->{$func}();
+        }
+    }
+
+    public function __clone()
+    {
+        $this->_id = clone $this->_id;
+        $this->_appPath = clone $this->_appPath;
+        $this->_controllerNamespace = clone $this->_controllerNamespace;
+        $this->_defaultRoute = clone $this->_defaultRoute;
+        $this->_modules = clone $this->_modules;
+        $this->_data = clone $this->_data;
     }
 }

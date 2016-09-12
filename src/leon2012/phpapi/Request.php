@@ -13,7 +13,9 @@ class Request
     
     private $_headers = null;
     private $_cookies;
-
+    private $_controller;
+    private $_method;
+    private $_params;
 
     public function __construct()
     {
@@ -26,4 +28,6 @@ class Request
             $this->_headers = new collections\HeaderCollection;
         }
     }
+
+    
 }

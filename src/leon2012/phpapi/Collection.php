@@ -20,8 +20,6 @@ abstract  class Collection implements \IteratorAggregate, \ArrayAccess, \Countab
         $this->_data = [];
     }
 
-    abstract protected function initData();
-
     public function get($name, $defaultValue = null)
     {
         if (!isset($this->_data[$name])) {
@@ -44,6 +42,11 @@ abstract  class Collection implements \IteratorAggregate, \ArrayAccess, \Countab
     public function fromArray($arr)
     {
         $this->_data = $arr;
+    }
+
+    public function toArray()
+    {
+        return $this->_data;
     }
 
     public function has($name)

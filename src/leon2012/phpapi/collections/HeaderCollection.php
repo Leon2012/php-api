@@ -11,7 +11,7 @@ namespace leon2012\phpapi\collections;
 class HeaderCollection extends \leon2012\phpapi\Collection  
 {
     
-    public  function initData()
+    public function __construct ()
     {
         $headers = [];
         if (function_exists('getallheaders')) {
@@ -30,4 +30,5 @@ class HeaderCollection extends \leon2012\phpapi\Collection
             $this->add($name, $value);
         }
     }
+
 }

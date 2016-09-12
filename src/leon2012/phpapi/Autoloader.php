@@ -31,7 +31,7 @@ class Autoloader
 
     public function loadClass($path, $className)
     {
-        $classFile = $path.strtr($className, '\\', DIRECTORY_SEPARATOR).'.php';
+        $classFile = $path.DIRECTORY_SEPARATOR.strtr($className, '\\', DIRECTORY_SEPARATOR).'.php';
         if (file_exists($classFile)) {
             require_once $classFile;
             return true;

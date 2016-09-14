@@ -10,9 +10,9 @@ class SiteController extends \leon2012\phpapi\Controller
         return 'test';
     }
 
-    public function indexAction()
+    public function indexAction($a, $c)
     {
-        return [$this->application->actionName, $this->controller, $this->action, $this->_a];
+        return [$this->application->actionName, $this->controller, $this->action, $this->_a, $a, $c];
     }
 
     public function beforeAction()

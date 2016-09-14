@@ -96,6 +96,7 @@ class Application
         $controllerName = '';
         $methodName = '';
         $controllerClass = '';
+        $params = [];
         if (empty($urlArr)) {
             $urlArr = explode('/', $this->getConfig('defaultRoute'));
         }
@@ -112,10 +113,17 @@ class Application
             }
             $controllerName = !empty($urlArr[1])?$urlArr[1]:$moduleDefaultController;
             $methodName = !empty($urlArr[2])?$urlArr[2]:$moduleDefaultMethod;
+            if (count($urlArr) > 3) {
+                $params = array_slice($urlArr, 3);
+            }
         }else{
             $controllerName = $urlArr[0];
             $methodName = !empty($urlArr[1])?$urlArr[1]:'index';
+            if (count($urlArr) > 2) {
+                $params = array_slice($urlArr, 2);
+            }
         }
+        
         if (empty($moduleName)) {
             $moduleClass = null;
             $controllerClass = $this->getConfig('controllerNamespace').'\\'.$controllerName.'Controller';
@@ -150,8 +158,12 @@ class Application
 
         try{
             $this->controller->beforeAction();
-
-            $data = $reflection->execute($this->controller, $this->actionName);
+            if (count($params) > 0){
+                $args = $this->convParams($params);
+            }else{
+                $args = [];
+            }
+            $data = $reflection->execute($this->controller, $this->actionName, $args);
             $this->response->setData($data);
 
             $this->controller->afterAction();
@@ -259,5 +271,25 @@ class Application
                 }
             }
         }
+    }
+
+    private function convParams($params)
+    {
+        $newParams = [];
+        $str = implode("/", $params);
+        // echo $str;
+        // $newStr = '';
+        // preg_replace_callback('~([a-z]+)/([a-z]+)~', function($matches) {
+        //     global $newStr
+        //     //print_r($matches);
+        //     $newStr .= ($matches[1].'='.$matches[2].'&');
+        // }, $str);
+        // echo $newStr;
+        preg_match_all('~([a-z]+)/([a-z]+)~', $str, $matches, PREG_SET_ORDER);
+        for($i=0; $i<count($matches); $i++) {
+            $match = $matches[$i];
+            $newParams[$match[1]] = $match[2];
+        }
+        return $newParams;
     }
 }

@@ -10,9 +10,18 @@ namespace leon2012\phpapi;
 
 use leon2012\phpapi\exceptions\CoreException;
 use leon2012\phpapi\exceptions\NotFoundControllerException;
+use leon2012\phpapi\exceptions\NotFoundMethodException;
+use leon2012\phpapi\exceptions\ExecuteException;
 use leon2012\phpapi\collections\ConfigCollection;
 use leon2012\phpapi\Config;
+use leon2012\phpapi\Reflection;
+use leon2012\phpapi\Controller;
+use leon2012\phpapi\LoggerInterface;
+use leon2012\phpapi\ErrorHandler;
 
+
+use ReflectionClass;
+use ReflectionException;
 
 class Application 
 {
@@ -23,12 +32,17 @@ class Application
     private $_config;
     private $_loader;
     private $_modules;
+    private $_errorHandler;
     public $request;
     public $response;
     public $moduleName;
-    public $controllerName;
+    public $moduleClass;
     public $methodName;
+    public $actionName;
+    public $controllerName;
     public $controllerClass;
+    public $controller;
+    public $logger;
     
 
     private function __construct()
@@ -49,6 +63,13 @@ class Application
 
     public function run()
     {
+
+        if (($this->logger != null) && ($this->logger instanceof LoggerInterface)) {
+            $this->_errorHandler = new ErrorHandler($this->logger);
+            $this->_errorHandler->registerExceptionHandler();
+            $this->_errorHandler->registerErrorHandler();
+        }
+
         $appPath = $this->getConfig('appPath');
         $this->setAppPath($appPath);
         $this->initModules();
@@ -74,7 +95,7 @@ class Application
         $moduleName = '';
         $controllerName = '';
         $methodName = '';
-        $controller = '';
+        $controllerClass = '';
         if (empty($urlArr)) {
             $urlArr = explode('/', $this->getConfig('defaultRoute'));
         }
@@ -96,29 +117,56 @@ class Application
             $methodName = !empty($urlArr[1])?$urlArr[1]:'index';
         }
         if (empty($moduleName)) {
-            $controller = $this->getConfig('controllerNamespace').'\\'.$controllerName.'Controller';
+            $moduleClass = null;
+            $controllerClass = $this->getConfig('controllerNamespace').'\\'.$controllerName.'Controller';
         }else{
             $moduleClass = $this->_modules[$moduleName];
-            $controller = $moduleClass->controllerNamespace.'\\'.$controllerName.'Controller';
+            $controllerClass = $moduleClass->controllerNamespace.'\\'.$controllerName.'Controller';
         }
-        if (!class_exists($controller)) {
-            throw new NotFoundControllerException('controller ' . $controller);
+        if (!class_exists($controllerClass)) {
+            throw new NotFoundControllerException('controller: ' . $controllerClass);
         }
-
+        $this->moduleClass = $moduleClass;
         $this->moduleName = $moduleName;
         $this->controllerName = $controllerName;
-        $this->controllerClass = $controller;
+        $this->controllerClass = $controllerClass;
         $this->methodName = $methodName;
+        $this->actionName = $methodName.'Action';
 
-        //echo $moduleName.'.'.$controllerName.'.'.$methodName;
+        $this->controller = new $controllerClass();
+        $this->controller->setApplication($this);
+        $this->controller->setController($this->controllerClass);
 
+        $reflection = new Reflection($this->controller);
+        $parentControllerName = '\\leon2012\\phpapi\\Controller';
+        if (!$reflection->isSubclassOf($parentControllerName)) {
+            throw new NotFoundControllerException(sprintf('controller: %s not instance %s', $controllerClass, $parentControllerName));
+        }
 
-        
-        //throw new NotFoundControllerException("no controller found");
+        $ok = $reflection->hasMethod($this->actionName);
+        if (!$ok) {
+            throw new NotFoundMethodException(sprintf('controller: %s, method: %s ', $controllerClass, $this->actionName));
+        }
+
+        try{
+            $this->controller->beforeAction();
+
+            $data = $reflection->execute($this->controller, $this->actionName);
+            $this->response->setData($data);
+
+            $this->controller->afterAction();
+
+        }catch(ReflectionException $e) {
+            throw new ExecuteException(sprintf('controller: %s, method: %s ', $controllerClass, $this->actionName));
+        }
     }
 
     public function set($key, $value)
     {
+        $vars = get_object_vars($this);
+        if (isset($vars[$key])) {
+            return null;
+        }
         $this->_data[$key] = $value;
         return $this;
     }
@@ -188,16 +236,16 @@ class Application
      *   $response = $this->call('modules.admin.user@profile', $arguments);
      * </code>
      */
-    private function call($resource, $args = [])
-    {
-        list($name, $method) = explode("@", $resource);
-        $method = $method.'Action';
-        $class = array_map('ucfirst', explode(".", $name));
-        $className = end($class).'Controller';
-        $namespace = str_replace(end($class), '', $class);
-        $class = '\\'.$this->getConfig('appNamespace').'\\'.implode('\\', $namespace).$className;
-        return call_user_func_array(new $class(), $method, $args);
-    }
+    // private function call($resource, $args = [])
+    // {
+    //     list($name, $method) = explode("@", $resource);
+    //     $method = $method.'Action';
+    //     $class = array_map('ucfirst', explode(".", $name));
+    //     $className = end($class).'Controller';
+    //     $namespace = str_replace(end($class), '', $class);
+    //     $class = '\\'.$this->getConfig('appNamespace').'\\'.implode('\\', $namespace).$className;
+    //     return call_user_func_array(new $class(), $method, $args);
+    // }
 
     private function initModules()
     {

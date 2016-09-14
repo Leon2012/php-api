@@ -16,6 +16,8 @@ require_once __DIR__."/../vendor/autoload.php";
 
 use leon2012\phpapi\Application;
 use leon2012\phpapi\exceptions\BadRequestException;
+use leon2012\phpapi\logs\FileLogger;
+
 
 $config = [
     'id' => 'api',
@@ -25,11 +27,12 @@ $config = [
     'modules' => [
         'v1' => 'api\modules\v1\Module',
     ],
-    'outputFormat' => 'xml',
+    'outputFormat' => 'json',
 
 ];
 $app = Application::getInstance();
 try{
+    $app->logger = new FileLogger('/tmp/out.log');
     $app->setConfig($config);
     $app->run();
     // echo "<pre>";
@@ -45,4 +48,5 @@ try{
     $app->response->setData(null);
     
 }
+$app->response->enableCache(true);
 $app->response->output();

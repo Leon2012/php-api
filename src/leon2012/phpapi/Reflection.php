@@ -15,9 +15,9 @@ class Reflection
 {
     private $_reflectionClass;
 
-    public function __construct()
+    public function __construct($class)
     {
-        $this->_reflectionClass = null;
+       $this->setClass($class);
     }
 
     public function setClass($class)
@@ -49,5 +49,31 @@ class Reflection
             $params = $method->getParameters();
         }
         return $params;
+    }
+
+    public function getParentClassNames()
+    {
+        $parents = array();
+        while ($parent = $this->_reflectionClass->getParentClass()) {
+            $parents[] = $parent->getName();
+            $class = $parent;
+        }
+        return $parents;
+    }
+
+    public function isInstance($object)
+    {
+        return $this->_reflectionClass->isInstance($object);
+    }
+
+    public function isSubclassOf($class)
+    {
+        return $this->_reflectionClass->isSubclassOf($class);
+    }
+
+    public function execute($object, $methodName, $args=[])
+    {
+        $method = $this->_reflectionClass->getMethod($methodName);
+        return $method->invokeArgs($object, $args);
     }
 }

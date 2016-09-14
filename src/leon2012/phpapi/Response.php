@@ -11,7 +11,7 @@ namespace leon2012\phpapi;
 use leon2012\phpapi\exceptions\CoreException;
 use leon2012\phpapi\responses\JsonResponse;
 use leon2012\phpapi\responses\XmlResponse;
-
+use leon2012\phpapi\responses\JsonpResponse;
 
 abstract class Response  
 {
@@ -28,7 +28,9 @@ abstract class Response
     private $_charset;
 
     const FORMAT_JSON = 'JSON';
+    const FORMAT_JSONP = 'JSONP';
     const FORMAT_XML = 'XML';
+
 
     
     public function __construct()
@@ -117,16 +119,13 @@ abstract class Response
         exit;
     }
 
-    private function __clone()
-    {
-
-    }
+    private function __clone(){}
 
     abstract function encode();
 
     public static function outputFormats()
     {
-        return [self::FORMAT_JSON, self::FORMAT_XML];
+        return [self::FORMAT_JSON, self::FORMAT_XML, self::FORMAT_JSONP];
     }
 
     public static function create($format = self::FORMAT_JSON)
@@ -139,6 +138,10 @@ abstract class Response
 
             case self::FORMAT_XML:
                 $instance = new XmlResponse();
+            break;
+
+            case self::FORMAT_JSONP:
+                $instance = new JsonpResponse();
             break;
         }
         return $instance;

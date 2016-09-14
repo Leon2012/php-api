@@ -39,7 +39,7 @@ class ApplicationTest extends PHPUnit_Framework_TestCase
 
     public function testCall1()
     {
-        $app = Application::getInstance();
+        $app = Application::new();
         $app->test();
     }
 }

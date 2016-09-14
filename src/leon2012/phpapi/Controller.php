@@ -12,8 +12,8 @@ use leon2012\phpapi\NotFoundMethodException;
 abstract class Controller 
 {
     
-    protected   $_app;
-    private     $_class;
+    protected       $_app;
+    protected       $_class;
 
     public function __construct()
     {
@@ -32,6 +32,14 @@ abstract class Controller
         }
     }
     
+    public function __get($name)
+    {
+        $func = 'get'.ucfirst($name);
+        if (method_exists($this, $func)) {
+            return $this->{$func}();
+        }
+    }
+
     public function setApplication($app)
     {
         $this->_app = $app;
@@ -53,15 +61,46 @@ abstract class Controller
         return isset($this->_class) ? $this->_class : get_called_class();
     }
 
+    public function getAction()
+    {
+        return $this->_app->actionName;
+    }
+
+    public function getModule()
+    {
+        return $this->_app->moduleClass;
+    }
+
+    protected function goBack()
+    {
+        $uri = $_SERVER["HTTP_REFERER"];
+        $this->redirect($uri);
+    }
+
+    protected function goHome()
+    {
+        $uri = $this->_app->getConfig('defaultRoute');
+        $this->redirect($uri);
+    }
+
+    public function beforeAction(){}
+
+    public function afterAction(){}
+
     protected function redirect($uri = '', $params = [], $type = 'location', $httpResponseCode = 302)
     {
-        if (empty($params)) {
-            $url = $type.': '.$uri;
+        if (strpos($uri, 'http') != false) {
+            $url = "//{$_SERVER['HTTP_HOST']}/{$uri}";
         }else{
-            $url = $type.': '.$uri . '?'.http_build_query($params);
+            $url = $uri;
         }
-        header($uri, true, $httpResponseCode);
-        return $this;
+        if (empty($params)) {
+            $url = $type.': '.$url;
+        }else{
+            $url = $type.': '.$url . '?'.http_build_query($params);
+        }
+        header($url, true, $httpResponseCode);
+        exit;
     }
 
 

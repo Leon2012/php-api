@@ -54,7 +54,7 @@ class Application
         $this->initModules();
 
         $this->request = new Request();
-        $this->response = new Response();
+        $this->response = Response::create($this->getConfig('outputFormat'));
 
         $requestMethod = strtolower($_SERVER['REQUEST_METHOD']);
         $pathInfo = '';
@@ -175,6 +175,11 @@ class Application
     public function __get($name) 
     {
         return $this->get($name, NULL);
+    }
+
+    private function __clone()
+    {
+
     }
 
     /**

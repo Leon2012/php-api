@@ -25,16 +25,24 @@ $config = [
     'modules' => [
         'v1' => 'api\modules\v1\Module',
     ],
+    'outputFormat' => 'xml',
 
 ];
 $app = Application::getInstance();
 try{
-
     $app->setConfig($config);
     $app->run();
-
+    // echo "<pre>";
+    // print_r($app);
+    // echo "</pre>";
+    //$app->response->output();
 }catch(Exception $e) {
-    echo "<pre>";
-    print_r($e);
-    echo "</pre>";
+    // echo "<pre>";
+    // print_r($e);
+    // echo "</pre>";
+    $app->response->setRet($e->getCode());
+    $app->response->setMsg($e->getMessage());
+    $app->response->setData(null);
+    
 }
+$app->response->output();

@@ -9,6 +9,7 @@
 namespace leon2012\phpapi;
 
 use leon2012\phpapi\exceptions\CoreException;
+use leon2012\phpapi\Response;
 
 class Config 
 {
@@ -18,6 +19,7 @@ class Config
     private $_defaultRoute;
     private $_modules;
     private $_data = [];
+    private $_outputFormat;
 	/**
 	 * init object
 	 * @param array $config [description]
@@ -38,6 +40,7 @@ class Config
  		$this->_appPath = isset($arr['appPath'])?$arr['appPath']:'';
  		$this->_controllerNamespace = isset($arr['controllerNamespace'])?$arr['controllerNamespace']:'';
         $this->_defaultRoute = isset($arr['defaultRoute'])?$arr['defaultRoute']:'';
+        $this->_outputFormat = isset($arr['outputFormat'])?strtoupper($arr['outputFormat']):'';
 
         $this->_modules = isset($arr['modules'])?$arr['modules']:[];
         $this->_data = $arr;
@@ -69,6 +72,10 @@ class Config
         if (empty($this->_defaultRoute)) {
             throw new CoreException('DefaultRoute is invalid');
         }
+
+        if (!in_array($this->_outputFormat, Response::outputFormats())) {
+            throw new CoreException('OutputFormat is invalid');
+        }
     }
 
     public function getId()
@@ -94,6 +101,11 @@ class Config
     public function getModules()
     {
         return $this->_modules;
+    }
+
+    public function getOutputFormat()
+    {
+        return $this->_outputFormat;
     }
 
     public function __get($name)

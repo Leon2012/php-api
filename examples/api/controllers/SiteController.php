@@ -7,7 +7,7 @@ class SiteController extends \leon2012\phpapi\Controller
 
     public function testAction()
     {
-        return 'test';
+        return $this->application->request->post('name', 'leon');
     }
 
     public function indexAction($a, $c)
@@ -23,5 +23,10 @@ class SiteController extends \leon2012\phpapi\Controller
     public function redirectAction()
     {
         $this->redirect('site/test', ['a'=>'b', 'c'=>'d']);
+    }
+
+    public function postAction()
+    {
+        return $this->post('name', 'leon');
     }
 }

@@ -91,15 +91,19 @@ class Application
         if ($pathInfo[0] == '/') {
             $pathInfo = substr($pathInfo, 1);
         }
-        $urlArr = explode('/', $pathInfo);
+
+        $this->request->setPathInfo($pathInfo);
+
+        if (empty($pathInfo)) {
+            $urlArr = explode('/', $this->getConfig('defaultRoute'));
+        }else{
+            $urlArr = explode('/', $pathInfo);
+        }
         $moduleName = '';
         $controllerName = '';
         $methodName = '';
         $controllerClass = '';
         $params = [];
-        if (empty($urlArr)) {
-            $urlArr = explode('/', $this->getConfig('defaultRoute'));
-        }
         if (isset($this->_modules[$urlArr[0]])) {//module.controller.method
             $moduleName = $urlArr[0];
             $moduleClass = $this->_modules[$moduleName];

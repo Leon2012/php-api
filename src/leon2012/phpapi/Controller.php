@@ -40,6 +40,21 @@ abstract class Controller
         }
     }
 
+    public function get($name, $defaultValue = '')
+    {
+        return $this->getApplication()->request->get($name, $defaultValue);
+    }
+
+    public function post($name, $defaultValue = '')
+    {
+        return $this->getApplication()->request->post($name, $defaultValue);
+    }
+
+    public function request($name, $defaultValue = '')
+    {
+        return $this->getApplication()->request->request($name, $defaultValue);
+    }
+
     public function setApplication($app)
     {
         $this->_app = $app;

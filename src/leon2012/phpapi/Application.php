@@ -18,6 +18,7 @@ use leon2012\phpapi\Reflection;
 use leon2012\phpapi\Controller;
 use leon2012\phpapi\LoggerInterface;
 use leon2012\phpapi\ErrorHandler;
+use leon2012\phpapi\traits\DebugTrait;
 
 
 use ReflectionClass;
@@ -44,6 +45,7 @@ class Application
     public $controller;
     public $logger;
     
+    use DebugTrait;
 
     private function __construct()
     {

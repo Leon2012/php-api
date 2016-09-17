@@ -29,4 +29,9 @@ class SiteController extends \leon2012\phpapi\Controller
     {
         return $this->post('name', 'leon');
     }
+
+    public function test1Action()
+    {
+        return 'a';
+    }
 }

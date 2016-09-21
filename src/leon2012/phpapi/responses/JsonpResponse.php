@@ -20,6 +20,10 @@ class JsonpResponse extends \leon2012\phpapi\Response
         $this->_format = parent::FORMAT_JSONP;
         $this->_options = 0;
         $this->_contentType = 'text/javascript';
+
+        $this->addHeader("Access-Control-Allow-Origin", "*");
+        $this->addHeader("Access-Control-Allow-Credentials", true);
+        $this->addHeader("Access-Control-Allow-Methods", "GET, POST, PUT");
     }
 
     public function setCallback($cb)

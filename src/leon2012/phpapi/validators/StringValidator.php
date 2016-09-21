@@ -15,7 +15,7 @@ class StringValidator extends leon2012\phpapi\Validator
 	public $max;
 	public $length;
 
-	public function __construct($length=[], $message = '')
+	public function __construct($length=[], $min = 0, $max = 255, $message = '')
 	{
 		if (!empty($length) && count($length) == 2) {
 			$this->min = $length[0];

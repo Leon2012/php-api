@@ -11,8 +11,9 @@ namespace leon2012\phpapi;
 abstract class Validator
 {
 
-	private $_errors;
-	public $message;
+	private 	$_errors;
+	public 		$message;
+	public 		$attribute;
 
 	public function __construct()
 	{

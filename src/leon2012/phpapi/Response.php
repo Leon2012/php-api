@@ -32,7 +32,9 @@ abstract class Response
     const FORMAT_XML = 'XML';
 
 
-    
+    /**
+     * Response constructor.
+     */
     public function __construct()
     {
         $this->_httpStatusCode = 200;
@@ -45,18 +47,30 @@ abstract class Response
         $this->_charset = 'utf-8';
     }
 
+    /**
+     * @param $ret
+     * @return $this
+     */
     public function setRet($ret)
     {
         $this->_ret = $ret;
         return $this;
     }
 
-    public function setMsg($msg) 
+    /**
+     * @param $msg
+     * @return $this
+     */
+    public function setMsg($msg)
     {
         $this->_msg = $msg;
         return $this;
     }
 
+    /**
+     * @param $data
+     * @return $this
+     */
     public function setData($data)
     {
         if (is_null($data)) {
@@ -66,6 +80,9 @@ abstract class Response
         return $this;
     }
 
+    /**
+     * @param array $output
+     */
     public function setOutput($output = [])
     {
         if (isset($output['ret'])) {
@@ -79,6 +96,10 @@ abstract class Response
         }
     }
 
+    /**
+     * @param $key
+     * @param $value
+     */
     public function addHeader($key, $value)
     {
         if (!empty($key)) {
@@ -86,12 +107,19 @@ abstract class Response
         }
     }
 
+    /**
+     * @param bool $enable
+     * @return $this
+     */
     public function enableCache($enable = false)
     {
         $this->_cache = $enable;
         return $this;
     }
 
+    /**
+     * @throws CoreException
+     */
     public function output()
     {
         $outputString = $this->encode();
@@ -119,15 +147,28 @@ abstract class Response
         exit;
     }
 
+    /**
+     *
+     */
     private function __clone(){}
 
+    /**
+     * @return mixed
+     */
     abstract function encode();
 
+    /**
+     * @return array
+     */
     public static function outputFormats()
     {
         return [self::FORMAT_JSON, self::FORMAT_XML, self::FORMAT_JSONP];
     }
 
+    /**
+     * @param string $format
+     * @return JsonpResponse|JsonResponse|XmlResponse|null
+     */
     public static function create($format = self::FORMAT_JSON)
     {
         $instance = null;

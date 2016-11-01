@@ -15,11 +15,18 @@ class Reflection
 {
     private $_reflectionClass;
 
+    /**
+     * Reflection constructor.
+     * @param $class
+     */
     public function __construct($class)
     {
        $this->setClass($class);
     }
 
+    /**
+     * @param $class
+     */
     public function setClass($class)
     {
         if (is_object($class)) {
@@ -28,16 +35,27 @@ class Reflection
         $this->_reflectionClass = new ReflectionClass($class);
     }
 
+    /**
+     * @return mixed
+     */
     public function getReflectionClass()
     {
         return $this->_reflectionClass;
     }
 
+    /**
+     * @param $methodName
+     * @return mixed
+     */
     public function hasMethod($methodName)
     {
         return $this->_reflectionClass->hasMethod($methodName);
     }
 
+    /**
+     * @param $methodName
+     * @return array
+     */
     public function getMethodParams($methodName)
     {
         $params = [];
@@ -51,6 +69,9 @@ class Reflection
         return $params;
     }
 
+    /**
+     * @return array
+     */
     public function getParentClassNames()
     {
         $parents = array();
@@ -61,16 +82,30 @@ class Reflection
         return $parents;
     }
 
+    /**
+     * @param $object
+     * @return mixed
+     */
     public function isInstance($object)
     {
         return $this->_reflectionClass->isInstance($object);
     }
 
+    /**
+     * @param $class
+     * @return mixed
+     */
     public function isSubclassOf($class)
     {
         return $this->_reflectionClass->isSubclassOf($class);
     }
 
+    /**
+     * @param $object
+     * @param $methodName
+     * @param array $args
+     * @return mixed
+     */
     public function execute($object, $methodName, $args=[])
     {
         $method = $this->_reflectionClass->getMethod($methodName);

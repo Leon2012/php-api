@@ -11,16 +11,25 @@ class Autoloader
 {
     private $_basePath;
 
+    /**
+     * Autoloader constructor.
+     */
     public function __construct()
     {
         spl_autoload_register(array($this, 'load'));
     }
 
+    /**
+     * @param $basePath
+     */
     public function setBasePath($basePath)
     {
         $this->_basePath = $basePath;
     }
 
+    /**
+     * @param $className
+     */
     private function load($className)
     {
         if (class_exists($className, FALSE) || interface_exists($className, FALSE)) {
@@ -29,6 +38,11 @@ class Autoloader
         $this->loadClass($this->_basePath, $className);
     }
 
+    /**
+     * @param $path
+     * @param $className
+     * @return bool
+     */
     public function loadClass($path, $className)
     {
         $classFile = $path.DIRECTORY_SEPARATOR.strtr($className, '\\', DIRECTORY_SEPARATOR).'.php';

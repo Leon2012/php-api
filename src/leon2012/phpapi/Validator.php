@@ -15,26 +15,42 @@ abstract class Validator
 	public 		$message;
 	public 		$attribute;
 
-	public function __construct()
+    /**
+     * Validator constructor.
+     */
+    public function __construct()
 	{
 		$this->_errors = [];
 	}
 
-	public function getErrors()
+    /**
+     * @return array
+     */
+    public function getErrors()
 	{
 		return $this->_errors;
 	}
 
-	public function getLastError()
+    /**
+     * @return mixed
+     */
+    public function getLastError()
 	{
 		return end($this->_errors);
 	}
 
-	public function addError($attribute, $message)
+    /**
+     * @param $attribute
+     * @param $message
+     */
+    public function addError($attribute, $message)
 	{
 		$error = str_replace($message, '{'.$attribute.'}', $attribute);
 		$this->_errors[] = $error;
 	}
 
-	abstruct function valid();
+	abstruct /**
+ *
+ */
+    function valid();
 }

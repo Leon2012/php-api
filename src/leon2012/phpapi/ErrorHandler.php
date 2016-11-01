@@ -14,22 +14,35 @@ class ErrorHandler
 {
 
     private $_logger;
-    
+
+    /**
+     * ErrorHandler constructor.
+     * @param LoggerInterface $logger
+     */
     public function __construct(LoggerInterface $logger)
     {
         $this->_logger = $logger;
     }
 
+    /**
+     *
+     */
     public function registerExceptionHandler()
     {
         set_exception_handler([$this, 'handleException']);
     }
 
+    /**
+     * @param int $errorTypes
+     */
     public function registerErrorHandler($errorTypes = -1)
     {
         set_error_handler([$this, 'handleError'], $errorTypes);
     }
 
+    /**
+     * @param $e
+     */
     public function handleException($e)
     {
         $level = AbstractLogger::ERROR;
@@ -40,6 +53,13 @@ class ErrorHandler
         );
     }
 
+    /**
+     * @param $code
+     * @param $message
+     * @param string $file
+     * @param int $line
+     * @param array $context
+     */
     public function handleError($code, $message, $file = '', $line = 0, $context = [])
     {
         $level = AbstractLogger::CRITICAL;
@@ -52,6 +72,10 @@ class ErrorHandler
         //$this->_logger->log($level, self::codeToString($code).': '.$message, ['code' => $code, 'message' => $message, 'file' => $file, 'line' => $line]);
     }
 
+    /**
+     * @param $code
+     * @return string
+     */
     private static function codeToString($code)
     {
         switch ($code) {

@@ -47,6 +47,9 @@ class Application
     
     use DebugTrait;
 
+    /**
+     * Application constructor.
+     */
     private function __construct()
     {
         $this->_data = [];
@@ -54,6 +57,9 @@ class Application
         $this->_loader = new Autoloader();
     }
 
+    /**
+     * @return Application|null
+     */
     public static function getInstance()
     {
         if (self::$_instance == null) {
@@ -63,6 +69,11 @@ class Application
         return self::$_instance;
     }
 
+    /**
+     * @throws ExecuteException
+     * @throws NotFoundControllerException
+     * @throws NotFoundMethodException
+     */
     public function run()
     {
 
@@ -179,6 +190,11 @@ class Application
         }
     }
 
+    /**
+     * @param $key
+     * @param $value
+     * @return $this|null
+     */
     public function set($key, $value)
     {
         $vars = get_object_vars($this);
@@ -189,6 +205,11 @@ class Application
         return $this;
     }
 
+    /**
+     * @param $key
+     * @param null $defaultValue
+     * @return mixed|null
+     */
     public function get($key, $defaultValue = null)
     {
         if (!isset($this->_data[$key])) {
@@ -197,18 +218,28 @@ class Application
         return $this->_data[$key];
     }
 
+    /**
+     * @param $path
+     */
     public function setAppPath($path)
     {
         $this->_appPath = $path;
         $this->_loader->setBasePath($this->_appPath);
     }
 
+    /**
+     * @param array $config
+     */
     public function setConfig($config = [])
     {
         $this->_config = new Config($config);
         $this->_config->valid();
     }
 
+    /**
+     * @param string $name
+     * @return mixed
+     */
     public function getConfig($name = '')
     {
         if (empty($name)) {
@@ -218,7 +249,13 @@ class Application
         }
     }
 
-    public function __call($name, $arguments) 
+    /**
+     * @param $name
+     * @param $arguments
+     * @return Application|mixed|null
+     * @throws CoreException
+     */
+    public function __call($name, $arguments)
     {
         if (substr($name, 0, 3) == 'set') {
             $key = lcfirst(substr($name, 3));
@@ -233,16 +270,27 @@ class Application
         }
     }
 
-    public function __set($name, $value) 
+    /**
+     * @param $name
+     * @param $value
+     */
+    public function __set($name, $value)
     {
         $this->set($name, $value);
     }
 
-    public function __get($name) 
+    /**
+     * @param $name
+     * @return mixed|null
+     */
+    public function __get($name)
     {
         return $this->get($name, NULL);
     }
 
+    /**
+     *
+     */
     private function __clone()
     {
 
@@ -265,6 +313,9 @@ class Application
     //     return call_user_func_array(new $class(), $method, $args);
     // }
 
+    /**
+     *
+     */
     private function initModules()
     {
         $modules = $this->getConfig('modules');
@@ -279,6 +330,10 @@ class Application
         }
     }
 
+    /**
+     * @param $params
+     * @return array
+     */
     private function convParams($params)
     {
         $newParams = [];

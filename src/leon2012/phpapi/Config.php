@@ -46,6 +46,9 @@ class Config
         $this->_data = $arr;
     }
 
+    /**
+     * @return array
+     */
     public function toArray()
     {
         return $this->_data;
@@ -78,36 +81,58 @@ class Config
         }
     }
 
+    /**
+     * @return mixed
+     */
     public function getId()
     {
         return $this->_id;
     }
 
+    /**
+     * @return mixed
+     */
     public function getAppPath()
     {
         return $this->_appPath;
     }
 
+    /**
+     * @return mixed
+     */
     public function getControllerNamespace()
     {
         return $this->_controllerNamespace;
     }
 
+    /**
+     * @return mixed
+     */
     public function getDefaultRoute()
     {
         return $this->_defaultRoute;
     }
 
+    /**
+     * @return mixed
+     */
     public function getModules()
     {
         return $this->_modules;
     }
 
+    /**
+     * @return mixed
+     */
     public function getOutputFormat()
     {
         return $this->_outputFormat;
     }
 
+    /**
+     * @param $name
+     * @return mixed
+     */
     public function __get($name)
     {
         $func = 'get'.ucfirst($name);
@@ -116,6 +141,9 @@ class Config
         }
     }
 
+    /**
+     *
+     */
     public function __clone()
     {
         $this->_id = clone $this->_id;

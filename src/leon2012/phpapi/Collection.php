@@ -15,11 +15,19 @@ abstract  class Collection implements \IteratorAggregate, \ArrayAccess, \Countab
     
     private $_data;
 
+    /**
+     * Collection constructor.
+     */
     public function __construct()
     {
         $this->_data = [];
     }
 
+    /**
+     * @param $name
+     * @param null $defaultValue
+     * @return mixed|null
+     */
     public function get($name, $defaultValue = null)
     {
         if (!isset($this->_data[$name])) {
@@ -28,32 +36,56 @@ abstract  class Collection implements \IteratorAggregate, \ArrayAccess, \Countab
         return $this->_data[$name];
     }
 
+    /**
+     * @param $name
+     * @param string $value
+     * @return $this
+     */
     public function set($name, $value = '')
     {
         $this->_data[$name] = $value;
         return $this;
     }
 
+    /**
+     * @param $name
+     * @param $value
+     * @return Collection
+     */
     public function add($name, $value)
     {
         return $this->set($name, $value);
     }
 
+    /**
+     * @param $arr
+     */
     public function fromArray($arr)
     {
         $this->_data = $arr;
     }
 
+    /**
+     * @return array
+     */
     public function toArray()
     {
         return $this->_data;
     }
 
+    /**
+     * @param $name
+     * @return bool
+     */
     public function has($name)
     {
         return isset($this->_data[$name]);
     }
 
+    /**
+     * @param $name
+     * @return mixed|null
+     */
     public function remove($name)
     {
         if (isset($this->_data[$name])) {
@@ -65,6 +97,9 @@ abstract  class Collection implements \IteratorAggregate, \ArrayAccess, \Countab
         }
     }
 
+    /**
+     *
+     */
     public function removeAll()
     {
         $this->_data = [];

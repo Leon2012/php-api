@@ -13,12 +13,18 @@ class Module
     public $controllerNamespace;
     public $defaultRoute = 'default/index';
     private $_basePath;
-    
+
+    /**
+     * Module constructor.
+     */
     public function __construct()
     {
         
     }
 
+    /**
+     *
+     */
     public function init()
     {
         if ($this->controllerNamespace === null) {
@@ -29,6 +35,9 @@ class Module
         }
     }
 
+    /**
+     * @return mixed
+     */
     public function getControllerPath()
     {
         return str_replace('\\', '/', $this->controllerNamespace);

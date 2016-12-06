@@ -1,9 +1,9 @@
 <?php
 /**
- * @Author: PengLeon
- * @Date:   2016-09-16 15:50:11
- * @Last Modified by:   PengLeon
- * @Last Modified time: 2016-09-16 16:00:31
+ * 
+ * @authors LeonPeng (leon.peng@live.com)
+ * @date    2016-12-05 17:16:10
+ * @version $Id$
  */
 
 namespace leon2012\phpapi\validations;

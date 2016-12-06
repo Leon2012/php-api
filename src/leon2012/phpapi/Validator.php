@@ -1,9 +1,9 @@
 <?php
 /**
- * @Author: PengLeon
- * @Date:   2016-09-16 15:47:02
- * @Last Modified by:   PengLeon
- * @Last Modified time: 2016-09-16 16:17:12
+ * 
+ * @authors LeonPeng (leon.peng@live.com)
+ * @date    2016-12-05 17:16:10
+ * @version $Id$
  */
 
 namespace leon2012\phpapi;
@@ -49,8 +49,6 @@ abstract class Validator
 		$this->_errors[] = $error;
 	}
 
-	abstruct /**
- *
- */
-    function valid();
+
+    abstract function valid();
 }

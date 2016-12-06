@@ -5,8 +5,7 @@
  * @date    2016-12-05 17:16:10
  * @version $Id$
  */
-
-namespace leon2012\phpapi;
+namespace leon2012\phpapi\orm;
 
 class Exception extends \Exception 
 {

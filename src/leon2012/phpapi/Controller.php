@@ -1,8 +1,8 @@
 <?php
 /**
  * 
- * @authors Leon Peng (xingskycn@163.com)
- * @date    2016-09-02 16:48:28
+ * @authors LeonPeng (leon.peng@live.com)
+ * @date    2016-12-05 17:16:10
  * @version $Id$
  */
 
@@ -12,8 +12,9 @@ use leon2012\phpapi\NotFoundMethodException;
 abstract class Controller 
 {
     
-    protected       $_app;
-    protected       $_class;
+    protected     $_app;
+    protected     $_class;
+    private       $_id;
 
     /**
      * Controller constructor.
@@ -132,6 +133,16 @@ abstract class Controller
     public function getModule()
     {
         return $this->_app->moduleClass;
+    }
+
+    public function setId($id)
+    {
+        $this->_id = $id;
+    }
+
+    public function getId()
+    {
+        return $this->_id;
     }
 
     /**

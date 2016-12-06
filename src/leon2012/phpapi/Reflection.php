@@ -1,8 +1,8 @@
 <?php
 /**
  * 
- * @authors Leon Peng (xingskycn@163.com)
- * @date    2016-09-12 16:30:54
+ * @authors LeonPeng (leon.peng@live.com)
+ * @date    2016-12-05 17:16:10
  * @version $Id$
  */
 
@@ -14,14 +14,16 @@ use ReflectionProperty;
 class Reflection
 {
     private $_reflectionClass;
+    private $_obj;
 
     /**
      * Reflection constructor.
      * @param $class
      */
-    public function __construct($class)
+    public function __construct($obj)
     {
-       $this->setClass($class);
+       $this->_reflectionClass = new ReflectionClass($obj);
+       $this->_obj = $obj;
     }
 
     /**
@@ -106,9 +108,9 @@ class Reflection
      * @param array $args
      * @return mixed
      */
-    public function execute($object, $methodName, $args=[])
+    public function execute($methodName, $args=[])
     {
         $method = $this->_reflectionClass->getMethod($methodName);
-        return $method->invokeArgs($object, $args);
+        return $method->invokeArgs($this->_obj, $args);
     }
 }

@@ -1,9 +1,9 @@
 <?php
 /**
- * @Author: PengLeon
- * @Date:   2016-09-17 09:46:53
- * @Last Modified by:   PengLeon
- * @Last Modified time: 2016-09-17 09:52:49
+ * 
+ * @authors LeonPeng (leon.peng@live.com)
+ * @date    2016-12-05 17:16:10
+ * @version $Id$
  */
 
 class YieldTest extends PHPUnit_Framework_TestCase

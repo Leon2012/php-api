@@ -1,8 +1,8 @@
 <?php
 /**
  * 
- * @authors Leon Peng (xingskycn@163.com)
- * @date    2016-09-01 10:22:37
+ * @authors LeonPeng (leon.peng@live.com)
+ * @date    2016-12-05 17:16:10
  * @version $Id$
  */
 
@@ -39,7 +39,7 @@ class ApplicationTest extends PHPUnit_Framework_TestCase
 
     public function testCall1()
     {
-        $app = Application::new();
-        $app->test();
+        //$app = Application::new();
+        //$app->test();
     }
 }

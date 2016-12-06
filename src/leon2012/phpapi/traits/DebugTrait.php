@@ -1,9 +1,9 @@
 <?php
 /**
- * @Author: pengleon
- * @Date:   2016-09-17 09:36:27
- * @Last Modified by:   PengLeon
- * @Last Modified time: 2016-09-17 09:37:44
+ * 
+ * @authors LeonPeng (leon.peng@live.com)
+ * @date    2016-12-05 17:16:10
+ * @version $Id$
  */
 
 namespace leon2012\phpapi\traits;

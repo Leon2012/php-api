@@ -1,8 +1,8 @@
 <?php
 /**
  * 
- * @authors Leon Peng (xingskycn@163.com)
- * @date    2016-09-05 11:05:26
+ * @authors LeonPeng (leon.peng@live.com)
+ * @date    2016-12-05 17:16:10
  * @version $Id$
  */
 // echo "<pre>";
@@ -28,7 +28,17 @@ $config = [
         'v1' => 'api\modules\v1\Module',
     ],
     'outputFormat' => 'json',
-
+    'database' => [
+        'driver' => 'pdo',  //support driver
+        'type' => 'mysql',  //only support mysql
+        'host' => '',       //mysql host
+        'port' => '',       //mysql port
+        'name' => '',       //database name
+        'username' => '',   //user name
+        'password' => '',   //password
+        'tablePrefix' => 'cms_',
+        'charset' => 'utf8', 
+    ],
 ];
 $app = Application::getInstance();
 try{

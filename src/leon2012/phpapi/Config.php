@@ -1,8 +1,8 @@
 <?php
 /**
  * 
- * @authors Leon Peng (xingskycn@163.com)
- * @date    2016-09-02 17:03:51
+ * @authors LeonPeng (leon.peng@live.com)
+ * @date    2016-12-05 17:16:10
  * @version $Id$
  */
 
@@ -20,6 +20,7 @@ class Config
     private $_modules;
     private $_data = [];
     private $_outputFormat;
+    private $_database;
 	/**
 	 * init object
 	 * @param array $config [description]
@@ -43,6 +44,7 @@ class Config
         $this->_outputFormat = isset($arr['outputFormat'])?strtoupper($arr['outputFormat']):'';
 
         $this->_modules = isset($arr['modules'])?$arr['modules']:[];
+        $this->_database = isset($arr['database'])?$arr['database']:[];
         $this->_data = $arr;
     }
 
@@ -127,6 +129,14 @@ class Config
     public function getOutputFormat()
     {
         return $this->_outputFormat;
+    }
+
+    /**
+     * 
+     */
+    public function getDatabase()
+    {
+        return $this->_database;
     }
 
     /**

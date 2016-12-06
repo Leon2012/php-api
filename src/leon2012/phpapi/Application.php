@@ -1,11 +1,10 @@
 <?php
 /**
  * 
- * @authors Leon Peng (xingskycn@163.com)
- * @date    2016-09-01 10:18:09
+ * @authors LeonPeng (leon.peng@live.com)
+ * @date    2016-12-05 17:16:10
  * @version $Id$
  */
-
 namespace leon2012\phpapi;
 
 use leon2012\phpapi\exceptions\CoreException;
@@ -19,7 +18,8 @@ use leon2012\phpapi\Controller;
 use leon2012\phpapi\LoggerInterface;
 use leon2012\phpapi\ErrorHandler;
 use leon2012\phpapi\traits\DebugTrait;
-
+use leon2012\phpapi\orm\Database;
+use leon2012\phpapi\Model;
 
 use ReflectionClass;
 use ReflectionException;
@@ -34,6 +34,7 @@ class Application
     private $_loader;
     private $_modules;
     private $_errorHandler;
+    private $_controllerReflectionCache;
     public $request;
     public $response;
     public $moduleName;
@@ -44,6 +45,7 @@ class Application
     public $controllerClass;
     public $controller;
     public $logger;
+    public $database;
     
     use DebugTrait;
 
@@ -86,9 +88,11 @@ class Application
         $appPath = $this->getConfig('appPath');
         $this->setAppPath($appPath);
         $this->initModules();
-
+        
         $this->request = new Request();
         $this->response = Response::create($this->getConfig('outputFormat'));
+
+        $this->initDatabase();
 
         $requestMethod = strtolower($_SERVER['REQUEST_METHOD']);
         $pathInfo = '';
@@ -161,18 +165,17 @@ class Application
         $this->controller = new $controllerClass();
         $this->controller->setApplication($this);
         $this->controller->setController($this->controllerClass);
-
-        $reflection = new Reflection($this->controller);
+        $this->controller->setId($controllerName);
         $parentControllerName = '\\leon2012\\phpapi\\Controller';
-        if (!$reflection->isSubclassOf($parentControllerName)) {
+        if (!is_subclass_of($this->controller, $parentControllerName)) {
             throw new NotFoundControllerException(sprintf('controller: %s not instance %s', $controllerClass, $parentControllerName));
         }
 
+        $reflection = $this->getControllerReflection($this->controller);
         $ok = $reflection->hasMethod($this->actionName);
         if (!$ok) {
             throw new NotFoundMethodException(sprintf('controller: %s, method: %s ', $controllerClass, $this->actionName));
         }
-
         try{
             $this->controller->beforeAction();
             if (count($params) > 0){
@@ -180,7 +183,7 @@ class Application
             }else{
                 $args = [];
             }
-            $data = $reflection->execute($this->controller, $this->actionName, $args);
+            $data = $reflection->execute($this->actionName, $args);
             $this->response->setData($data);
 
             $this->controller->afterAction();
@@ -330,6 +333,15 @@ class Application
         }
     }
 
+    private function initDatabase()
+    {
+        $dbConfig = $this->getConfig('database');
+        if ($dbConfig) {
+            $this->database = new Database($dbConfig);
+            Model::setGlobalDatabase($this->database);
+        }
+    }
+
     /**
      * @param $params
      * @return array
@@ -352,5 +364,17 @@ class Application
             $newParams[$match[1]] = $match[2];
         }
         return $newParams;
+    }
+
+    private function getControllerReflection($controller) 
+    {
+        $className = $controller->getController();
+        if (isset($this->_controllerReflectionCache[$className])) {
+            return $this->_controllerReflectionCache[$className];
+        }else{
+            $reflection = new Reflection($controller);
+            $this->_controllerReflectionCache[$className] = $reflection;
+            return $reflection;
+        }
     }
 }

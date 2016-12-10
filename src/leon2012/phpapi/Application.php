@@ -14,6 +14,7 @@ use leon2012\phpapi\exceptions\ExecuteException;
 use leon2012\phpapi\collections\ConfigCollection;
 use leon2012\phpapi\Config;
 use leon2012\phpapi\Reflection;
+use leon2012\phpapi\ReflectionManager;
 use leon2012\phpapi\Controller;
 use leon2012\phpapi\LoggerInterface;
 use leon2012\phpapi\ErrorHandler;
@@ -24,7 +25,7 @@ use leon2012\phpapi\Model;
 use ReflectionClass;
 use ReflectionException;
 
-class Application 
+final class Application 
 {
 
     private static $_instance = null;
@@ -34,7 +35,7 @@ class Application
     private $_loader;
     private $_modules;
     private $_errorHandler;
-    private $_controllerReflectionCache;
+    //private $_controllerReflectionCache;
     public $request;
     public $response;
     public $moduleName;
@@ -171,7 +172,8 @@ class Application
             throw new NotFoundControllerException(sprintf('controller: %s not instance %s', $controllerClass, $parentControllerName));
         }
 
-        $reflection = $this->getControllerReflection($this->controller);
+        //$reflection = $this->getControllerReflection($this->controller);
+        $reflection = ReflectionManager::shareManager()->getReflection($this->controller);
         $ok = $reflection->hasMethod($this->actionName);
         if (!$ok) {
             throw new NotFoundMethodException(sprintf('controller: %s, method: %s ', $controllerClass, $this->actionName));
@@ -366,15 +368,15 @@ class Application
         return $newParams;
     }
 
-    private function getControllerReflection($controller) 
-    {
-        $className = $controller->getController();
-        if (isset($this->_controllerReflectionCache[$className])) {
-            return $this->_controllerReflectionCache[$className];
-        }else{
-            $reflection = new Reflection($controller);
-            $this->_controllerReflectionCache[$className] = $reflection;
-            return $reflection;
-        }
-    }
+    // private function getControllerReflection($controller) 
+    // {
+    //     $className = $controller->getController();
+    //     if (isset($this->_controllerReflectionCache[$className])) {
+    //         return $this->_controllerReflectionCache[$className];
+    //     }else{
+    //         $reflection = new Reflection($controller);
+    //         $this->_controllerReflectionCache[$className] = $reflection;
+    //         return $reflection;
+    //     }
+    // }
 }

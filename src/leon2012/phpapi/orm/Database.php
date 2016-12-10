@@ -8,24 +8,61 @@
 
 namespace leon2012\phpapi\orm;
 use leon2012\phpapi\orm\exceptions\InvalidConfigException;
-
+use leon2012\phpapi\exceptions\NotFoundMethodException;
+use leon2012\phpapi\orm\DriverFactory;
 class Database 
 {
 
 	private $_config;
 	private $_driver;
-    private $_supportDrivers = ['pdo', 'mysqli'];
-    private $_supportTypes = ['mysql'];
+    private $_supportDrivers = ['pdo', 'mysqli', 'mysql'];
+    private $_supportDatabaseTypes = ['mysql'];
 
 	public function __construct(array $config)
 	{
-        $this->checkConfig($config);
-         
+        $this->checkConfig($config); 
+        $this->initDriver();
 	}
+
+    public function __destruct()
+    {
+        $this->_driver->close();
+    }
 
     private function initDriver()
     {
-        
+        $this->_driver = DriverFactory::getDriver($this->getConfig('driver'));
+        $this->_driver->open($this->_config);
+    }
+
+    public function getConfig($key)
+    {
+        return $this->_config[$key];
+    }
+
+    public function __call($name, $arguments = null)
+    {
+        if (!method_exists($this->_driver, $name)) {
+            throw new NotFoundMethodException($name);
+        }
+        $args = [];
+        if (!is_null($arguments)) {
+            if (!is_array($arguments)) {
+                $args[0] = $arguments;
+            }else{
+                $args = $arguments;
+            }
+        }
+        return call_user_func_array([$this->_driver, $name], $args);
+    }
+
+    public function __debugInfo()
+    {
+        return [
+            'driver' => get_class($this->_driver),
+            'config' => $this->_config,
+            'sql' => $this->_driver->getLastSql(),
+        ];
     }
 
     private function checkConfig(array $config)
@@ -42,7 +79,7 @@ class Database
             throw new InvalidConfigException('no type config');
         }
 
-        if (!in_array(strtolower($config['type']), $this->_supportTypes)) {
+        if (!in_array(strtolower($config['type']), $this->_supportDatabaseTypes)) {
             throw new InvalidConfigException('no support type');
         }
 

@@ -16,6 +16,19 @@ class Reflection
     private $_reflectionClass;
     private $_obj;
 
+    const IS_STATIC = ReflectionProperty::IS_STATIC;        //1
+    const IS_PUBLIC = ReflectionProperty::IS_PUBLIC;        //256
+    const IS_PROTECTED = ReflectionProperty::IS_PROTECTED;  //512 
+    const IS_PRIVATE = ReflectionProperty::IS_PRIVATE;      //1024
+
+    const IS_STRING = 2048; //property is string
+    const IS_INT = 4096;    //property is int
+    const IS_BOOL = 8192;   //property is bool
+    const IS_FLOAT = 16384; //property is float
+    const IS_NULL = 32768;  //property is null
+    const IS_UNKNOWN = 0;   //property is unknown
+
+
     /**
      * Reflection constructor.
      * @param $class
@@ -43,6 +56,14 @@ class Reflection
     public function getReflectionClass()
     {
         return $this->_reflectionClass;
+    }
+
+    /**
+     * 
+     */
+    public function getObj()
+    {
+        return $this->_obj;
     }
 
     /**
@@ -113,4 +134,99 @@ class Reflection
         $method = $this->_reflectionClass->getMethod($methodName);
         return $method->invokeArgs($this->_obj, $args);
     }
+
+    public function getProperties($filter)
+    {
+        $props = $this->_reflectionClass->getProperties($filter);
+        return $props;
+    }
+
+    public function getPropertyNames($filter)
+    {
+        $props = $this->getProperties($filter);
+        $names = [];
+        foreach($props as $prop) {
+            $names[] = $prop->getName();
+        }
+        return $names;
+    }
+
+    public function getProperty($name)
+    {
+        return $this->_reflectionClass->getProperty($name);
+    }
+
+    public function getPropertyValue($name)
+    {
+        $prop = $this->getProperty($name);
+        if ($prop) {
+            return $prop->getValue();
+        }else{
+            return null;
+        }
+    }
+
+    public function getPropertyType($name)
+    {
+        $propValue = $this->getPropertyValue($name);
+        if (is_null($propValue)) {
+            return Reflection::IS_NULL;
+
+        }else if (is_string($propValue)) {
+            return Reflection::IS_STRING;
+
+        }else if (is_bool($propValue)) {
+            return Reflection::IS_BOOL;
+
+        }else if (is_double($propValue)) {
+            return Reflection::IS_FLOAT;
+
+        }else if (is_float($propValue)) {
+            return Reflection::IS_FLOAT;
+
+        }else if (is_numeric($propValue)) {
+            return Reflection::IS_FLOAT;
+
+        }else if (is_int($propValue)) {
+            return Reflection::IS_INT;
+
+        }else if (is_long($propValue)) {
+            return Reflection::IS_INT;
+
+        }else if (is_integer($propValue)) {
+            return Reflection::IS_INT;
+
+        }else if (is_array($propValue)) {
+            return Reflection::IS_UNKNOWN;
+
+        }else if (is_resource($propValue)) {
+            return Reflection::IS_UNKNOWN;
+
+        }else if (is_callable($propValue)) {
+            return Reflection::IS_UNKNOWN;
+
+        }else if (is_object($propValue)) {
+            return Reflection::IS_UNKNOWN;
+        }else{
+            return Reflection::IS_UNKNOWN;
+        }
+    }
+
+    public function getPropertyFormatValue($name)
+    {
+
+    }
+
+    public function setPropertyValue($name, $value)
+    {
+        $prop = $this->getProperty($name);
+        if ($prop) {
+            $prop->setValue($value);
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+
 }

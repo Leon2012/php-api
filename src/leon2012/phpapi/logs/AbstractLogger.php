@@ -12,6 +12,8 @@ use leon2012\phpapi\LoggerInterface;
 abstract class AbstractLogger implements LoggerInterface
 {
 
+    private $_outputLevel;
+
     const EMERGENCY = 'emergency';
     const ALERT     = 'alert';
     const CRITICAL  = 'critical';
@@ -21,6 +23,21 @@ abstract class AbstractLogger implements LoggerInterface
     const INFO      = 'info';
     const DEBUG     = 'debug';
 
+    private $_levelNum = [
+        self::INFO      =>  1,
+        self::NOTICE    =>  2,
+        self::DEBUG     =>  3,
+        self::WARNING   =>  4,
+        self::ERROR     =>  5,
+        self::CRITICAL  =>  6,
+        self::ALERT     =>  7,
+        self::EMERGENCY =>  8,
+    ];
+
+    public function __construct()
+    {
+        $this->_outputLevel = 1;
+    }
     
     public function emergency($message, array $context = array())
     {
@@ -60,5 +77,30 @@ abstract class AbstractLogger implements LoggerInterface
     public function debug($message, array $context = array())
     {
         $this->log(self::DEBUG, $message, $context);
+    }
+
+    public function getLevelNum($level)
+    {
+        return isset($this->_levelNum[$level])?$this->_levelNum[$level]:0;
+    }
+
+    public function setOutputLevel($levelNum)
+    {
+        $this->_outputLevel = $levelNum;
+    }
+
+    public function getOutputLevel()
+    {
+        return $this->_outputLevel = $levelNum;
+    }
+
+    public function checkOutputLevel($level)
+    {
+        $levelNum = $this->getLevelNum($level);
+        if ($levelNum < $this->_outputLevel) {
+            return false;
+        }else{
+            return true;
+        }
     }
 }

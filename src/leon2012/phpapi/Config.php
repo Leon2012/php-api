@@ -21,6 +21,7 @@ class Config
     private $_data = [];
     private $_outputFormat;
     private $_database;
+    private $_log;
 	/**
 	 * init object
 	 * @param array $config [description]
@@ -45,6 +46,7 @@ class Config
 
         $this->_modules = isset($arr['modules'])?$arr['modules']:[];
         $this->_database = isset($arr['database'])?$arr['database']:[];
+        $this->_log = isset($arr['log'])?$arr['log']:[];
         $this->_data = $arr;
     }
 
@@ -80,6 +82,10 @@ class Config
 
         if (!in_array($this->_outputFormat, Response::outputFormats())) {
             throw new CoreException('OutputFormat is invalid');
+        }
+
+        if (empty($this->_log)) {
+            throw new CoreException('Log is invalid');
         }
     }
 
@@ -137,6 +143,14 @@ class Config
     public function getDatabase()
     {
         return $this->_database;
+    }
+
+    /**
+     * 
+     */
+    public function getLog()
+    {
+        return $this->_log;
     }
 
     /**

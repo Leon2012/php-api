@@ -22,12 +22,13 @@ class PDODriver extends Base implements DriverInterface
         if (null == $this->_connection) {
             try {
                 if (isset($config['charset'])) {
-                    $params = [PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES ".$config['charset']];
+                    $params = [\PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES ".$config['charset']];
                 }else{
                     $params = [];
                 }
-                $this->_connection = new \PDO($config['dsn'], $config['username'], $config['password'], $params);
-                $this->_connection->setAttribute(\PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+                $dsn = sprintf("%s:dbname=%s;host=%s;port=%s", $config['type'], $config['name'], $config['host'], $config['port']);
+                $this->_connection = new \PDO($dsn, $config['username'], $config['password'], $params);
+                $this->_connection->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
             }catch(\PDOException $e) {
                 throw new ConnectionException($e->getMessage());
             }
@@ -82,6 +83,11 @@ class PDODriver extends Base implements DriverInterface
             ]; 
         }
         return null;
+    }
+
+    public function quote($string)
+    {
+        return $this->_connection->quote($string);
     }
 
     public function beginTransaction()

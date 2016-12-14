@@ -61,7 +61,7 @@ class Database
         return [
             'driver' => get_class($this->_driver),
             'config' => $this->_config,
-            'sql' => $this->_driver->getLastSql(),
+            'lastSql' => $this->_driver->getLastSql(),
         ];
     }
 

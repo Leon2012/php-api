@@ -10,20 +10,20 @@ use leon2012\phpapi\orm\Model as BaseModel;
 
 class Model extends BaseModel 
 {
-    public static $database; //global database
+    private static $_globalDatabase = null; //global database
 
-    public function __construct()
+    public function __construct($database = null)
     {
-        parent::__construct();
+        parent::__construct($database);
     }
 
     public function database()
     {
-        return self::$database;
+        return self::$_globalDatabase;
     }
 
     public static function setGlobalDatabase($db)
     {
-        self::$database = $db;
+        self::$_globalDatabase = $db;
     }
 }

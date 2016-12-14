@@ -19,6 +19,7 @@ interface DriverInterface
     public function getLastInsertId();
     public function getLastError();
     public function getLastSql();
+    public function quote($string);
 
     public function beginTransaction();
     public function commit();

@@ -16,6 +16,7 @@ class FileLogger extends AbstractLogger
     
     public function __construct($logFile)
     {
+        parent::__construct();
         if (!file_exists($logFile)) {
             if (!touch($logFile)) {
                 throw new InvalidArgumentException('Log file ' . $logFile . ' cannot be created');
@@ -29,8 +30,11 @@ class FileLogger extends AbstractLogger
 
     public function log($level, $message, array $context = array())
     {
-        $log = '[' . date('Y-m-d H:i:s') . '] ' . strtoupper($level) . ': ' . $this->interpolate($message, $context) . "\n";
-        file_put_contents($this->_logFile, $log, FILE_APPEND | LOCK_EX);
+        $chk = $this->checkOutputLevel($level);
+        if ($chk) {
+            $log = '[' . date('Y-m-d H:i:s') . '] ' . strtoupper($level) . ': ' . $this->interpolate($message, $context) . "\n";
+            file_put_contents($this->_logFile, $log, FILE_APPEND | LOCK_EX);
+        }
     }
 
     private function interpolate($message, array $context = array())

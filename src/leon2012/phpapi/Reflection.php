@@ -144,6 +144,7 @@ class Reflection
     public function getPropertyNames($filter)
     {
         $props = $this->getProperties($filter);
+        print_r($props);
         $names = [];
         foreach($props as $prop) {
             $names[] = $prop->getName();

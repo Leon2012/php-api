@@ -21,6 +21,7 @@ use leon2012\phpapi\ErrorHandler;
 use leon2012\phpapi\traits\DebugTrait;
 use leon2012\phpapi\orm\Database;
 use leon2012\phpapi\Model;
+use leon2012\phpapi\logs\FileLogger;
 
 use ReflectionClass;
 use ReflectionException;
@@ -79,13 +80,8 @@ final class Application
      */
     public function run()
     {
-
-        if (($this->logger != null) && ($this->logger instanceof LoggerInterface)) {
-            $this->_errorHandler = new ErrorHandler($this->logger);
-            $this->_errorHandler->registerExceptionHandler();
-            $this->_errorHandler->registerErrorHandler();
-        }
-
+        $this->initLogger();
+        
         $appPath = $this->getConfig('appPath');
         $this->setAppPath($appPath);
         $this->initModules();
@@ -342,6 +338,24 @@ final class Application
             $this->database = new Database($dbConfig);
             Model::setGlobalDatabase($this->database);
         }
+    }
+
+    private function initLogger()
+    {
+        $logConfig = $this->getConfig('log');
+        if ($logConfig) {
+            $output = $logConfig['output'];
+            if ("file" == $output) {
+                $this->logger = new FileLogger($logConfig['file']);
+                $this->logger->setOutputLevel($logConfig['level']);
+            }
+        }
+        if (($this->logger != null) && ($this->logger instanceof LoggerInterface)) {
+            $this->_errorHandler = new ErrorHandler($this->logger);
+            $this->_errorHandler->registerExceptionHandler();
+            $this->_errorHandler->registerErrorHandler();
+        }
+
     }
 
     /**

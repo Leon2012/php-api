@@ -28,6 +28,11 @@ $config = [
         'v1' => 'api\modules\v1\Module',
     ],
     'outputFormat' => 'json',
+    'log' => [
+        'output' => 'file',
+        'level'  => 1, //info
+        'file'   => '/tmp/out.log',
+    ],
     'database' => [
         'driver' => 'pdo',  //support driver
         'type' => 'mysql',  //only support mysql
@@ -42,7 +47,7 @@ $config = [
 ];
 $app = Application::getInstance();
 try{
-    $app->logger = new FileLogger('/tmp/out.log');
+    //$app->logger = new FileLogger('/tmp/out.log');
     $app->setConfig($config);
     $app->run();
     // echo "<pre>";

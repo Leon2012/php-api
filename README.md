@@ -43,7 +43,20 @@
     $app->response->enableCache(true);
     $app->response->output();
 
-    ###Model调用
+    ###Model调用###
+    
+    class UserModel extends Model
+    {
+        public function tableName()
+        {
+            return 'cms_user';
+        }
+
+        public function pkId()
+        {
+            return 'id';
+        }
+    }
     $config = [
         'driver' => 'pdo',  //support driver
         'type' => 'mysql',  //only support mysql

@@ -1,6 +1,6 @@
 <?php
 /**
- * 
+ *
  * @authors LeonPeng (leon.peng@live.com)
  * @date    2016-12-05 17:16:10
  * @version $Id$
@@ -11,7 +11,7 @@ namespace leon2012\phpapi\responses;
 use SimpleXMLElement;
 use DOMDocument;
 
-class XmlResponse extends \leon2012\phpapi\Response 
+class XmlResponse extends \leon2012\phpapi\Response
 {
 
     private $_rootName;
@@ -33,7 +33,7 @@ class XmlResponse extends \leon2012\phpapi\Response
         $ret =  $this->array2xml($value);
         if ($ret === FALSE) {
             return null;
-        }else{
+        } else {
             return $ret;
         }
     }
@@ -46,25 +46,25 @@ class XmlResponse extends \leon2012\phpapi\Response
     private function array2xml($arr)
     {
         $rootXml = "<?xml version=\"1.0\" encoding=\"utf-8\" ?><{$this->_rootName}></{$this->_rootName}>";
-        $xml = new SimpleXMLElement($rootXml); 
-        $f = create_function('$f,$c,$a',' 
-            foreach($a as $k=>$v) { 
-                if(is_array($v)) { 
-                    $ch=$c->addChild($k); 
-                    $f($f,$ch,$v); 
-                } else { 
-                    $c->addChild($k,$v); 
-                } 
-            }'); 
-        $f($f,$xml,$arr); 
-        //return $xml->asXML(); 
+        $xml = new SimpleXMLElement($rootXml);
+        $f = create_function('$f,$c,$a','
+            foreach ($a as $k=>$v) {
+                if (is_array($v)) {
+                    $ch=$c->addChild($k);
+                    $f($f,$ch,$v);
+                } else {
+                    $c->addChild($k,$v);
+                }
+            }');
+        $f($f,$xml,$arr);
+        //return $xml->asXML();
         $dom = dom_import_simplexml($xml); //simplexmlement不支持LIBXML_NOEMPTYTAG参数，所以需要用dom输出
         $doc = new DOMDocument('1.0');
         $doc->formatOutput = true;
         $dom = $doc->importNode($dom, true);
         $dom = $doc->appendChild($dom);
+
         return $doc->saveXML($doc, LIBXML_NOEMPTYTAG);
     }
-
 
 }

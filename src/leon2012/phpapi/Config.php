@@ -1,6 +1,6 @@
 <?php
 /**
- * 
+ *
  * @authors LeonPeng (leon.peng@live.com)
  * @date    2016-12-05 17:16:10
  * @version $Id$
@@ -9,23 +9,22 @@
 namespace leon2012\phpapi;
 
 use leon2012\phpapi\exceptions\CoreException;
-use leon2012\phpapi\Response;
 
-class Config 
+class Config
 {
     private $_id;
-	private $_appPath;
-	private $_controllerNamespace;
+    private $_appPath;
+    private $_controllerNamespace;
     private $_defaultRoute;
     private $_modules;
     private $_data = [];
     private $_outputFormat;
     private $_database;
     private $_log;
-	/**
-	 * init object
-	 * @param array $config [description]
-	 */
+    /**
+     * init object
+     * @param array $config [description]
+     */
     public function __construct($config = [])
     {
         $this->fromArray($config);
@@ -34,13 +33,13 @@ class Config
     /**
      * init data
      * @param  array  $arr [description]
-     * @return [type]      [description]
+     * @return [type] [description]
      */
     public function fromArray($arr = [])
     {
-    	$this->_id = isset($arr['id'])?$arr['id']:'';
- 		$this->_appPath = isset($arr['appPath'])?$arr['appPath']:'';
- 		$this->_controllerNamespace = isset($arr['controllerNamespace'])?$arr['controllerNamespace']:'';
+        $this->_id = isset($arr['id'])?$arr['id']:'';
+        $this->_appPath = isset($arr['appPath'])?$arr['appPath']:'';
+        $this->_controllerNamespace = isset($arr['controllerNamespace'])?$arr['controllerNamespace']:'';
         $this->_defaultRoute = isset($arr['defaultRoute'])?$arr['defaultRoute']:'';
         $this->_outputFormat = isset($arr['outputFormat'])?strtoupper($arr['outputFormat']):'';
 
@@ -59,16 +58,16 @@ class Config
     }
 
     /**
-     * valid 
+     * valid
      * @return [type] [description]
      */
     public function valid()
     {
-    	if (empty($this->_id)) {
-    		throw new CoreException('Id is invalid');
-    	}
+        if (empty($this->_id)) {
+            throw new CoreException('Id is invalid');
+        }
 
-    	if (empty($this->_appPath)) {
+        if (empty($this->_appPath)) {
             throw new CoreException('AppPath is invalid');
         }
 
@@ -138,7 +137,7 @@ class Config
     }
 
     /**
-     * 
+     *
      */
     public function getDatabase()
     {
@@ -146,7 +145,7 @@ class Config
     }
 
     /**
-     * 
+     *
      */
     public function getLog()
     {

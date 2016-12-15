@@ -1,6 +1,6 @@
 <?php
 /**
- * 
+ *
  * @authors LeonPeng (leon.peng@live.com)
  * @date    2016-12-05 17:16:10
  * @version $Id$
@@ -10,7 +10,7 @@ namespace leon2012\phpapi;
 
 use leon2012\phpapi\logs\AbstractLogger;
 
-class ErrorHandler 
+class ErrorHandler
 {
 
     private $_logger;
@@ -57,8 +57,8 @@ class ErrorHandler
      * @param $code
      * @param $message
      * @param string $file
-     * @param int $line
-     * @param array $context
+     * @param int    $line
+     * @param array  $context
      */
     public function handleError($code, $message, $file = '', $line = 0, $context = [])
     {
@@ -110,6 +110,7 @@ class ErrorHandler
             case E_USER_DEPRECATED:
                 return 'E_USER_DEPRECATED';
         }
+
         return 'Unknown PHP error';
     }
 }

@@ -13,7 +13,5 @@ $handler = new ErrorHandler($logger);
 // $handler->registerExceptionHandler();
 // throw new CoreException("testHandleException");
 
-
-
 $handler->registerErrorHandler();
 trigger_error('testHandleError', E_USER_NOTICE);

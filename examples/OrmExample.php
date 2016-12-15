@@ -1,5 +1,5 @@
 <?php
-require_once "./UserModel.php";
+require_once './UserModel.php';
 $config = [
     'database' => [
         'driver' => 'pdo',  //support driver
@@ -10,7 +10,6 @@ $config = [
         'username' => '',   //user name
         'password' => '',   //password
         'tablePrefix' => 'cms_',
-        'charset' => 'utf8', 
+        'charset' => 'utf8',
     ],
 ];
-

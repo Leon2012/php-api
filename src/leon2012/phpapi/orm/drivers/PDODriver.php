@@ -1,6 +1,6 @@
 <?php
 /**
- * 
+ *
  * @authors LeonPeng (leon.peng@live.com)
  * @date    2016-12-05 17:16:10
  * @version $Id$
@@ -18,21 +18,22 @@ class PDODriver extends Base implements DriverInterface
     }
 
     public function open(array $config)
-    { 
+    {
         if (null == $this->_connection) {
             try {
                 if (isset($config['charset'])) {
                     $params = [\PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES ".$config['charset']];
-                }else{
+                } else {
                     $params = [];
                 }
                 $dsn = sprintf("%s:dbname=%s;host=%s;port=%s", $config['type'], $config['name'], $config['host'], $config['port']);
                 $this->_connection = new \PDO($dsn, $config['username'], $config['password'], $params);
                 $this->_connection->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
-            }catch(\PDOException $e) {
+            } catch (\PDOException $e) {
                 throw new ConnectionException($e->getMessage());
             }
         }
+
         return $this;
     }
 
@@ -44,6 +45,7 @@ class PDODriver extends Base implements DriverInterface
     public function exec($sql)
     {
         $this->setLastSql($sql);
+
         return $this->_connection->exec($sql);
     }
 
@@ -52,7 +54,7 @@ class PDODriver extends Base implements DriverInterface
         $this->setLastSql($sql);
         if ($assoc) {
             $rs = $this->_connection->query($sql);
-        }else{
+        } else {
 
         }
     }
@@ -62,9 +64,10 @@ class PDODriver extends Base implements DriverInterface
         $sth = $this->buildStatement($tableName, $params, $fields);
         if ($assoc) {
             $result = $sth->fetch(\PDO::FETCH_ASSOC);
-        }else{
+        } else {
             $result = $sth->fetch(\PDO::FETCH_OBJ);
         }
+
         return $result;
     }
 
@@ -73,9 +76,10 @@ class PDODriver extends Base implements DriverInterface
         $sth = $this->buildStatement($tableName, $params, $fields);
         if ($assoc) {
             $result = $sth->fetchAll(\PDO::FETCH_ASSOC);
-        }else{
+        } else {
             $result = $sth->fetchAll(\PDO::FETCH_OBJ);
         }
+
         return $result;
     }
 
@@ -91,8 +95,9 @@ class PDODriver extends Base implements DriverInterface
            return [
                 'code' => $errorInfo[1],
                 'message' => $errorInfo[2]
-            ]; 
+            ];
         }
+
         return null;
     }
 
@@ -122,26 +127,27 @@ class PDODriver extends Base implements DriverInterface
         $sql .= ' SELECT ';
         if (!empty($fields)) {
             $sq .= implode(",", $fields);
-        }else{
+        } else {
             $sql .= " * ";
         }
         $sql .= ' FROM '.$tableName . ' WHERE ';
         $values = [];
         if (!empty($params)) {
             $keys = [];
-            foreach($params as $k => $v) {
+            foreach ($params as $k => $v) {
                 $kk = ':'.$k;
                 $keys[] = $k.' = '.$kk;
                 $values[$kk] = $v;
             }
             $where = implode(" AND ", $keys);
             $sql .= $where;
-        }else{
+        } else {
             $sql .= ' 1=1 ';
         }
         $this->setLastSql($sql);
         $sth = $this->_connection->prepare($sql, array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
         $sth->execute($values);
+
         return $sth;
     }
 }

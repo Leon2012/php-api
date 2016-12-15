@@ -1,6 +1,6 @@
 <?php
 /**
- * 
+ *
  * @authors LeonPeng (leon.peng@live.com)
  * @date    2016-12-05 17:16:10
  * @version $Id$
@@ -8,9 +8,9 @@
 
 use leon2012\phpapi\logs\FileLogger;
 
-class FileLoggerTest extends PHPUnit_Framework_TestCase 
+class FileLoggerTest extends PHPUnit_Framework_TestCase
 {
-    
+
     public function testLog()
     {
         $logFile = '/tmp/test.log';

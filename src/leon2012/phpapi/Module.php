@@ -1,13 +1,13 @@
 <?php
 /**
- * 
+ *
  * @authors LeonPeng (leon.peng@live.com)
  * @date    2016-12-05 17:16:10
  * @version $Id$
  */
 namespace leon2012\phpapi;
 
-class Module 
+class Module
 {
     public $controllerNamespace;
     public $defaultRoute = 'default/index';
@@ -18,7 +18,7 @@ class Module
      */
     public function __construct()
     {
-        
+
     }
 
     /**
@@ -41,6 +41,5 @@ class Module
     {
         return str_replace('\\', '/', $this->controllerNamespace);
     }
-
 
 }

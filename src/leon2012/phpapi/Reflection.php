@@ -1,6 +1,6 @@
 <?php
 /**
- * 
+ *
  * @authors LeonPeng (leon.peng@live.com)
  * @date    2016-12-05 17:16:10
  * @version $Id$
@@ -18,7 +18,7 @@ class Reflection
 
     const IS_STATIC = ReflectionProperty::IS_STATIC;        //1
     const IS_PUBLIC = ReflectionProperty::IS_PUBLIC;        //256
-    const IS_PROTECTED = ReflectionProperty::IS_PROTECTED;  //512 
+    const IS_PROTECTED = ReflectionProperty::IS_PROTECTED;  //512
     const IS_PRIVATE = ReflectionProperty::IS_PRIVATE;      //1024
 
     const IS_STRING = 2048; //property is string
@@ -27,7 +27,6 @@ class Reflection
     const IS_FLOAT = 16384; //property is float
     const IS_NULL = 32768;  //property is null
     const IS_UNKNOWN = 0;   //property is unknown
-
 
     /**
      * Reflection constructor.
@@ -59,7 +58,7 @@ class Reflection
     }
 
     /**
-     * 
+     *
      */
     public function getObj()
     {
@@ -89,6 +88,7 @@ class Reflection
         if ($method) {
             $params = $method->getParameters();
         }
+
         return $params;
     }
 
@@ -102,6 +102,7 @@ class Reflection
             $parents[] = $parent->getName();
             $class = $parent;
         }
+
         return $parents;
     }
 
@@ -126,18 +127,20 @@ class Reflection
     /**
      * @param $object
      * @param $methodName
-     * @param array $args
+     * @param  array $args
      * @return mixed
      */
     public function execute($methodName, $args=[])
     {
         $method = $this->_reflectionClass->getMethod($methodName);
+
         return $method->invokeArgs($this->_obj, $args);
     }
 
     public function getProperties($filter)
     {
         $props = $this->_reflectionClass->getProperties($filter);
+
         return $props;
     }
 
@@ -146,9 +149,10 @@ class Reflection
         $props = $this->getProperties($filter);
         print_r($props);
         $names = [];
-        foreach($props as $prop) {
+        foreach ($props as $prop) {
             $names[] = $prop->getName();
         }
+
         return $names;
     }
 
@@ -162,7 +166,7 @@ class Reflection
         $prop = $this->getProperty($name);
         if ($prop) {
             return $prop->getValue();
-        }else{
+        } else {
             return null;
         }
     }
@@ -173,42 +177,42 @@ class Reflection
         if (is_null($propValue)) {
             return Reflection::IS_NULL;
 
-        }else if (is_string($propValue)) {
+        } elseif (is_string($propValue)) {
             return Reflection::IS_STRING;
 
-        }else if (is_bool($propValue)) {
+        } elseif (is_bool($propValue)) {
             return Reflection::IS_BOOL;
 
-        }else if (is_double($propValue)) {
+        } elseif (is_double($propValue)) {
             return Reflection::IS_FLOAT;
 
-        }else if (is_float($propValue)) {
+        } elseif (is_float($propValue)) {
             return Reflection::IS_FLOAT;
 
-        }else if (is_numeric($propValue)) {
+        } elseif (is_numeric($propValue)) {
             return Reflection::IS_FLOAT;
 
-        }else if (is_int($propValue)) {
+        } elseif (is_int($propValue)) {
             return Reflection::IS_INT;
 
-        }else if (is_long($propValue)) {
+        } elseif (is_long($propValue)) {
             return Reflection::IS_INT;
 
-        }else if (is_integer($propValue)) {
+        } elseif (is_integer($propValue)) {
             return Reflection::IS_INT;
 
-        }else if (is_array($propValue)) {
+        } elseif (is_array($propValue)) {
             return Reflection::IS_UNKNOWN;
 
-        }else if (is_resource($propValue)) {
+        } elseif (is_resource($propValue)) {
             return Reflection::IS_UNKNOWN;
 
-        }else if (is_callable($propValue)) {
+        } elseif (is_callable($propValue)) {
             return Reflection::IS_UNKNOWN;
 
-        }else if (is_object($propValue)) {
+        } elseif (is_object($propValue)) {
             return Reflection::IS_UNKNOWN;
-        }else{
+        } else {
             return Reflection::IS_UNKNOWN;
         }
     }
@@ -223,11 +227,11 @@ class Reflection
         $prop = $this->getProperty($name);
         if ($prop) {
             $prop->setValue($value);
+
             return true;
-        }else{
+        } else {
             return false;
         }
     }
-
 
 }

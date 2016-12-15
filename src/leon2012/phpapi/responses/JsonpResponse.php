@@ -1,6 +1,6 @@
 <?php
 /**
- * 
+ *
  * @authors LeonPeng (leon.peng@live.com)
  * @date    2016-12-05 17:16:10
  * @version $Id$
@@ -8,18 +8,18 @@
 
 namespace leon2012\phpapi\responses;
 
-class JsonpResponse extends \leon2012\phpapi\Response 
+class JsonpResponse extends \leon2012\phpapi\Response
 {
 
     private $_options;
     private $_callback;
-    
+
     public function __construct()
     {
         parent::__construct();
         $this->_format = parent::FORMAT_JSONP;
         $this->_options = 0;
-        $this->_contentType = 'text/javascript';
+        $this->_contentType = 'application/json';
 
         $this->addHeader("Access-Control-Allow-Origin", "*");
         $this->addHeader("Access-Control-Allow-Credentials", true);
@@ -29,6 +29,7 @@ class JsonpResponse extends \leon2012\phpapi\Response
     public function setCallback($cb)
     {
         $this->_callback = $cb;
+        $this->_contentType = 'text/javascript';
     }
 
     public function encode()
@@ -40,10 +41,10 @@ class JsonpResponse extends \leon2012\phpapi\Response
         $ret =  json_encode($value, $this->_options);
         if ($ret === FALSE) {
             return null;
-        }else{
+        } else {
             if (empty($this->_callback)) {
-                return null;
-            }else{
+                return $ret;
+            } else {
                 return $this->_callback.'('.$ret.');';
             }
         }

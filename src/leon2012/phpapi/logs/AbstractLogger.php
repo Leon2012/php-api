@@ -1,6 +1,6 @@
 <?php
 /**
- * 
+ *
  * @authors LeonPeng (leon.peng@live.com)
  * @date    2016-12-05 17:16:10
  * @version $Id$
@@ -38,7 +38,7 @@ abstract class AbstractLogger implements LoggerInterface
     {
         $this->_outputLevel = 1;
     }
-    
+
     public function emergency($message, array $context = array())
     {
         $this->log(self::EMERGENCY, $message, $context);
@@ -48,7 +48,7 @@ abstract class AbstractLogger implements LoggerInterface
     {
         $this->log(self::ALERT, $message, $context);
     }
-    
+
     public function critical($message, array $context = array())
     {
         $this->log(self::CRITICAL, $message, $context);
@@ -99,7 +99,7 @@ abstract class AbstractLogger implements LoggerInterface
         $levelNum = $this->getLevelNum($level);
         if ($levelNum < $this->_outputLevel) {
             return false;
-        }else{
+        } else {
             return true;
         }
     }

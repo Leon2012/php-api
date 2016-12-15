@@ -1,7 +1,7 @@
 <?php
 namespace api\controllers;
 
-class SiteController extends \leon2012\phpapi\Controller 
+class SiteController extends \leon2012\phpapi\Controller
 {
     private $_a;
 

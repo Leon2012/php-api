@@ -1,6 +1,6 @@
 <?php
 /**
- * 
+ *
  * @authors LeonPeng (leon.peng@live.com)
  * @date    2016-12-05 17:16:10
  * @version $Id$
@@ -9,20 +9,19 @@
 namespace leon2012\phpapi\orm;
 use leon2012\phpapi\orm\exceptions\InvalidConfigException;
 use leon2012\phpapi\exceptions\NotFoundMethodException;
-use leon2012\phpapi\orm\DriverFactory;
-class Database 
+class Database
 {
 
-	private $_config;
-	private $_driver;
+    private $_config;
+    private $_driver;
     private $_supportDrivers = ['pdo', 'mysqli', 'mysql'];
     private $_supportDatabaseTypes = ['mysql'];
 
-	public function __construct(array $config)
-	{
-        $this->checkConfig($config); 
+    public function __construct(array $config)
+    {
+        $this->checkConfig($config);
         $this->initDriver();
-	}
+    }
 
     public function __destruct()
     {
@@ -49,10 +48,11 @@ class Database
         if (!is_null($arguments)) {
             if (!is_array($arguments)) {
                 $args[0] = $arguments;
-            }else{
+            } else {
                 $args = $arguments;
             }
         }
+
         return call_user_func_array([$this->_driver, $name], $args);
     }
 
@@ -89,20 +89,20 @@ class Database
 
         if (!isset($config['port']) || empty($config['port'])) {
             throw new InvalidConfigException('no port config');
-        }  
+        }
 
         if (!isset($config['name']) || empty($config['name'])) {
             throw new InvalidConfigException('no port config');
-        }  
+        }
 
         if (!isset($config['username']) || empty($config['username'])) {
             throw new InvalidConfigException('no user name config');
-        }  
+        }
 
         if (!isset($config['password'])) {
             throw new InvalidConfigException('no password config');
         }
 
-        $this->_config = $config; 
+        $this->_config = $config;
     }
 }

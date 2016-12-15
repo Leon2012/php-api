@@ -1,6 +1,6 @@
 <?php
 /**
- * 
+ *
  * @authors LeonPeng (leon.peng@live.com)
  * @date    2016-12-05 17:16:10
  * @version $Id$
@@ -8,11 +8,11 @@
 
 namespace leon2012\phpapi\responses;
 
-class JsonResponse extends \leon2012\phpapi\Response 
+class JsonResponse extends \leon2012\phpapi\Response
 {
 
     private $_options;
-    
+
     public function __construct()
     {
         parent::__construct();
@@ -30,7 +30,7 @@ class JsonResponse extends \leon2012\phpapi\Response
         $ret =  json_encode($value, $this->_options);
         if ($ret === FALSE) {
             return null;
-        }else{
+        } else {
             return $ret;
         }
     }

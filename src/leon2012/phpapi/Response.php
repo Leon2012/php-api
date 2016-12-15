@@ -1,6 +1,6 @@
 <?php
 /**
- * 
+ *
  * @authors LeonPeng (leon.peng@live.com)
  * @date    2016-12-05 17:16:10
  * @version $Id$
@@ -13,9 +13,9 @@ use leon2012\phpapi\responses\JsonResponse;
 use leon2012\phpapi\responses\XmlResponse;
 use leon2012\phpapi\responses\JsonpResponse;
 
-abstract class Response  
+abstract class Response
 {
-    
+
     protected $_ret;
     protected $_msg;
     protected $_data;
@@ -30,7 +30,6 @@ abstract class Response
     const FORMAT_JSON = 'JSON';
     const FORMAT_JSONP = 'JSONP';
     const FORMAT_XML = 'XML';
-
 
     /**
      * Response constructor.
@@ -54,6 +53,7 @@ abstract class Response
     public function setRet($ret)
     {
         $this->_ret = $ret;
+
         return $this;
     }
 
@@ -64,6 +64,7 @@ abstract class Response
     public function setMsg($msg)
     {
         $this->_msg = $msg;
+
         return $this;
     }
 
@@ -77,6 +78,7 @@ abstract class Response
             $data = '';
         }
         $this->_data = $data;
+
         return $this;
     }
 
@@ -103,17 +105,18 @@ abstract class Response
     public function addHeader($key, $value)
     {
         if (!empty($key)) {
-            $this->_headers[$key] = $value;    
+            $this->_headers[$key] = $value;
         }
     }
 
     /**
-     * @param bool $enable
+     * @param  bool  $enable
      * @return $this
      */
     public function enableCache($enable = false)
     {
         $this->_cache = $enable;
+
         return $this;
     }
 
@@ -132,14 +135,14 @@ abstract class Response
         if ($this->_cache) {//enable cache
             header('Cache-Control:max-age='.$this->_cacheTime, true);
             header('Pragma:public');
-        }else{ //disable cache
+        } else { //disable cache
             header('Expires: Thu, 01-Jan-70 00:00:01 GMT');
             header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
             header('Cache-Control: no-store, no-cache, must-revalidate');
             header('Cache-Control: post-check=0, pre-check=0', false);
             header('Pragma: no-cache');
         }
-        foreach($this->_headers as $key => $value) {
+        foreach ($this->_headers as $key => $value) {
             $headerString = sprintf("%s: %s", $key, $value);
             header($headerString);
         }
@@ -150,12 +153,12 @@ abstract class Response
     /**
      *
      */
-    private function __clone(){}
+    private function __clone() {}
 
     /**
      * @return mixed
      */
-    abstract function encode();
+    abstract public function encode();
 
     /**
      * @return array
@@ -166,14 +169,14 @@ abstract class Response
     }
 
     /**
-     * @param string $format
+     * @param  string                                      $format
      * @return JsonpResponse|JsonResponse|XmlResponse|null
      */
     public static function create($format = self::FORMAT_JSON)
     {
 
         $instance = null;
-        switch($format){
+        switch ($format) {
             case self::FORMAT_JSON:
                 $instance = new JsonResponse();
             break;
@@ -186,6 +189,7 @@ abstract class Response
                 $instance = new JsonpResponse();
             break;
         }
+
         return $instance;
     }
 }

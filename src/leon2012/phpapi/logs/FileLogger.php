@@ -1,6 +1,6 @@
 <?php
 /**
- * 
+ *
  * @authors LeonPeng (leon.peng@live.com)
  * @date    2016-12-05 17:16:10
  * @version $Id$
@@ -10,10 +10,10 @@ namespace leon2012\phpapi\logs;
 
 use leon2012\phpapi\exceptions\InvalidArgumentException;
 
-class FileLogger extends AbstractLogger 
+class FileLogger extends AbstractLogger
 {
     private $_logFile;
-    
+
     public function __construct($logFile)
     {
         parent::__construct();
@@ -43,6 +43,7 @@ class FileLogger extends AbstractLogger
         foreach ($context as $key => $val) {
             $replace['{' . $key . '}'] = $val;
         }
+
         return strtr($message, $replace);
     }
 }

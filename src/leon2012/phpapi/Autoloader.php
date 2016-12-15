@@ -1,13 +1,13 @@
 <?php
 /**
- * 
+ *
  * @authors LeonPeng (leon.peng@live.com)
  * @date    2016-12-05 17:16:10
  * @version $Id$
  */
 namespace leon2012\phpapi;
 
-class Autoloader 
+class Autoloader
 {
     private $_basePath;
 
@@ -48,8 +48,10 @@ class Autoloader
         $classFile = $path.DIRECTORY_SEPARATOR.strtr($className, '\\', DIRECTORY_SEPARATOR).'.php';
         if (file_exists($classFile)) {
             require_once $classFile;
+
             return true;
         }
+
         return false;
     }
 }

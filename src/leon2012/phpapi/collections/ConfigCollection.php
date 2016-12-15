@@ -1,6 +1,6 @@
 <?php
 /**
- * 
+ *
  * @authors LeonPeng (leon.peng@live.com)
  * @date    2016-12-05 17:16:10
  * @version $Id$
@@ -8,7 +8,7 @@
 namespace leon2012\phpapi\collections;
 use leon2012\phpapi\exceptions\InvalidArgumentException;
 
-class ConfigCollection extends \leon2012\phpapi\Collection  
+class ConfigCollection extends \leon2012\phpapi\Collection
 {
 
     public function __construct($config = [])

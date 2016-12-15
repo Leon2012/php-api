@@ -1,6 +1,6 @@
 <?php
 /**
- * 
+ *
  * @authors LeonPeng (leon.peng@live.com)
  * @date    2016-12-05 17:16:10
  * @version $Id$
@@ -11,9 +11,9 @@ namespace leon2012\phpapi;
 use leon2012\phpapi\collections\ArrayCollection;
 use leon2012\phpapi\collections\HeaderCollection;
 
-class Request  
+class Request
 {
-    
+
     private $_headers;
     private $_cookie;
     private $_get;
@@ -39,7 +39,7 @@ class Request
 
     /**
      * @param $name
-     * @param string $defaultValue
+     * @param  string     $defaultValue
      * @return mixed|null
      */
     public function get($name, $defaultValue = '')
@@ -49,7 +49,7 @@ class Request
 
     /**
      * @param $name
-     * @param string $defaultValue
+     * @param  string     $defaultValue
      * @return mixed|null
      */
     public function post($name, $defaultValue = '')
@@ -59,7 +59,7 @@ class Request
 
     /**
      * @param $name
-     * @param string $defaultValue
+     * @param  string     $defaultValue
      * @return mixed|null
      */
     public function request($name, $defaultValue = '')
@@ -69,7 +69,7 @@ class Request
 
     /**
      * @param $name
-     * @param string $defaultValue
+     * @param  string     $defaultValue
      * @return mixed|null
      */
     public function server($name, $defaultValue = '')
@@ -88,6 +88,7 @@ class Request
         if (isset($_SERVER['REQUEST_METHOD'])) {
             return strtoupper($_SERVER['REQUEST_METHOD']);
         }
+
         return 'GET';
     }
 
@@ -181,6 +182,7 @@ class Request
         if ($this->_rawBody == null) {
             $this->_rawBody = file_get_contents('php://input');
         }
+
         return $this->_rawBody;
     }
 
@@ -199,6 +201,7 @@ class Request
     public function setPathInfo($pathInfo)
     {
         $this->_pathInfo = $pathInfo;
+
         return $this;
     }
 
@@ -249,7 +252,5 @@ class Request
     {
         return isset($_SERVER['REMOTE_HOST']) ? $_SERVER['REMOTE_HOST'] : null;
     }
-
-
 
 }

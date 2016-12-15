@@ -1,6 +1,6 @@
 <?php
 /**
- * 
+ *
  * @authors LeonPeng (leon.peng@live.com)
  * @date    2016-12-05 17:16:10
  * @version $Id$
@@ -9,11 +9,11 @@
 use leon2012\phpapi\responses\JsonResponse;
 use leon2012\phpapi\responses\XmlResponse;
 
-class ResponseTest extends PHPUnit_Framework_TestCase 
+class ResponseTest extends PHPUnit_Framework_TestCase
 {
 
     private $output = ['ret' => 200, 'msg' => '', 'data' => 1];
-    
+
     public function testJsonResponse()
     {
         $response = new JsonResponse();
@@ -39,16 +39,17 @@ class ResponseTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($array, ['ret' => 201, 'msg' => '', 'data' => 1]);
     }
 
-    public function object2array($object) 
-    { 
-        return @json_decode(@json_encode($object),1); 
-    } 
+    public function object2array($object)
+    {
+        return @json_decode(@json_encode($object),1);
+    }
 
     public function xml2array($xml)
     {
         $p = xml_parser_create();
         xml_parse_into_struct($p, $xml, $vals, $index);
         xml_parser_free($p);
+
         return $vals;
     }
 
@@ -61,6 +62,7 @@ class ResponseTest extends PHPUnit_Framework_TestCase
                 && $node = & $node[];
             $node = $element->count() ? $this->simpleXml2array($element) : trim($element);
         }
+
         return $array;
     }
 }

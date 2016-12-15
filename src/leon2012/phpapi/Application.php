@@ -1,6 +1,6 @@
 <?php
 /**
- * 
+ *
  * @authors LeonPeng (leon.peng@live.com)
  * @date    2016-12-05 17:16:10
  * @version $Id$
@@ -11,22 +11,13 @@ use leon2012\phpapi\exceptions\CoreException;
 use leon2012\phpapi\exceptions\NotFoundControllerException;
 use leon2012\phpapi\exceptions\NotFoundMethodException;
 use leon2012\phpapi\exceptions\ExecuteException;
-use leon2012\phpapi\collections\ConfigCollection;
-use leon2012\phpapi\Config;
-use leon2012\phpapi\Reflection;
-use leon2012\phpapi\ReflectionManager;
-use leon2012\phpapi\Controller;
-use leon2012\phpapi\LoggerInterface;
-use leon2012\phpapi\ErrorHandler;
 use leon2012\phpapi\traits\DebugTrait;
 use leon2012\phpapi\orm\Database;
-use leon2012\phpapi\Model;
 use leon2012\phpapi\logs\FileLogger;
 
-use ReflectionClass;
 use ReflectionException;
 
-final class Application 
+final class Application
 {
 
     private static $_instance = null;
@@ -48,7 +39,7 @@ final class Application
     public $controller;
     public $logger;
     public $database;
-    
+
     use DebugTrait;
 
     /**
@@ -70,6 +61,7 @@ final class Application
             $instance = new Application();
             self::$_instance = $instance;
         }
+
         return self::$_instance;
     }
 
@@ -87,14 +79,14 @@ final class Application
         $this->setAppPath($appPath);
         $this->initModules();
         $this->initDatabase();
-        
+
         $requestMethod = strtolower($_SERVER['REQUEST_METHOD']);
         $pathInfo = '';
         if (!empty($_SERVER['PATH_INFO'])) {
             $pathInfo = $_SERVER['PATH_INFO'];
-        }elseif (!empty($_SERVER['ORIG_PATH_INFO']) && $_SERVER['ORIG_PATH_INFO'] !== '/index.php') {
+        } elseif (!empty($_SERVER['ORIG_PATH_INFO']) && $_SERVER['ORIG_PATH_INFO'] !== '/index.php') {
             $pathInfo = $_SERVER['ORIG_PATH_INFO'];
-        }else{
+        } else {
             if (!empty($_SERVER['REQUEST_URI'])) {
                 $pathInfo = (strpos($_SERVER['REQUEST_URI'], '?') > 0)? strstr($_SERVER['REQUEST_URI'], '?', true) : $_SERVER['REQUEST_URI'];
             }
@@ -107,7 +99,7 @@ final class Application
 
         if (empty($pathInfo)) {
             $urlArr = explode('/', $this->getConfig('defaultRoute'));
-        }else{
+        } else {
             $urlArr = explode('/', $pathInfo);
         }
         $moduleName = '';
@@ -123,7 +115,7 @@ final class Application
             $moduleDefaultController = $moduleDefaultRouteArr[0];
             if (count($moduleDefaultRouteArr) > 1) {
                 $moduleDefaultMethod = $moduleDefaultRouteArr[1];
-            }else{
+            } else {
                 $moduleDefaultMethod = 'index';
             }
             $controllerName = !empty($urlArr[1])?$urlArr[1]:$moduleDefaultController;
@@ -131,18 +123,18 @@ final class Application
             if (count($urlArr) > 3) {
                 $params = array_slice($urlArr, 3);
             }
-        }else{
+        } else {
             $controllerName = $urlArr[0];
             $methodName = !empty($urlArr[1])?$urlArr[1]:'index';
             if (count($urlArr) > 2) {
                 $params = array_slice($urlArr, 2);
             }
         }
-        
+
         if (empty($moduleName)) {
             $moduleClass = null;
             $controllerClass = $this->getConfig('controllerNamespace').'\\'.$controllerName.'Controller';
-        }else{
+        } else {
             $moduleClass = $this->_modules[$moduleName];
             $controllerClass = $moduleClass->controllerNamespace.'\\'.$controllerName.'Controller';
         }
@@ -170,17 +162,17 @@ final class Application
         if (!$ok) {
             throw new NotFoundMethodException(sprintf('controller: %s, method: %s ', $controllerClass, $this->actionName));
         }
-        try{
+        try {
             $this->controller->beforeAction();
-            if (count($params) > 0){
+            if (count($params) > 0) {
                 $args = $this->convParams($params);
-            }else{
+            } else {
                 $args = [];
             }
             $data = $reflection->execute($this->actionName, $args);
             $this->response->setData($data);
             $this->controller->afterAction();
-        }catch(ReflectionException $e) {
+        } catch (ReflectionException $e) {
             throw new ExecuteException(sprintf('controller: %s, method: %s ', $controllerClass, $this->actionName));
         }
     }
@@ -197,12 +189,13 @@ final class Application
             return null;
         }
         $this->_data[$key] = $value;
+
         return $this;
     }
 
     /**
      * @param $key
-     * @param null $defaultValue
+     * @param  null       $defaultValue
      * @return mixed|null
      */
     public function get($key, $defaultValue = null)
@@ -210,6 +203,7 @@ final class Application
         if (!isset($this->_data[$key])) {
             return $defaultValue;
         }
+
         return $this->_data[$key];
     }
 
@@ -232,14 +226,14 @@ final class Application
     }
 
     /**
-     * @param string $name
+     * @param  string $name
      * @return mixed
      */
     public function getConfig($name = '')
     {
         if (empty($name)) {
             return $this->_config->toArray();
-        }else{
+        } else {
             return $this->_config->$name;
         }
     }
@@ -254,9 +248,11 @@ final class Application
     {
         if (substr($name, 0, 3) == 'set') {
             $key = lcfirst(substr($name, 3));
+
             return $this->set($key, isset($arguments[0]) ? $arguments[0] : NULL);
-        } else if (substr($name, 0, 3) == 'get') {
+        } elseif (substr($name, 0, 3) == 'get') {
             $key = lcfirst(substr($name, 3));
+
             return $this->get($key, isset($arguments[0]) ? $arguments[0] : NULL);
         } else {
             $format = "Call to undefined method {%s}";
@@ -298,7 +294,7 @@ final class Application
     {
         $modules = $this->getConfig('modules');
         if (is_array($modules)) {
-            foreach($modules as $name => $class) {
+            foreach ($modules as $name => $class) {
                 $classFile = '\\'.$class;
                 $obj = new $classFile();
                 if ($obj) {
@@ -344,19 +340,20 @@ final class Application
         $newParams = [];
         $str = implode("/", $params);
         preg_match_all('~([a-zA-z0-9]+)/([a-zA-z0-9]+)~', $str, $matches, PREG_SET_ORDER);
-        for($i=0; $i<count($matches); $i++) {
+        for ($i=0; $i<count($matches); $i++) {
             $match = $matches[$i];
             $newParams[$match[1]] = $match[2];
         }
+
         return $newParams;
     }
 
-    // private function getControllerReflection($controller) 
+    // private function getControllerReflection($controller)
     // {
     //     $className = $controller->getController();
     //     if (isset($this->_controllerReflectionCache[$className])) {
     //         return $this->_controllerReflectionCache[$className];
-    //     }else{
+    //     } else {
     //         $reflection = new Reflection($controller);
     //         $this->_controllerReflectionCache[$className] = $reflection;
     //         return $reflection;

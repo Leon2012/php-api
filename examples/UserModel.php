@@ -25,7 +25,7 @@ $config = [
     'username' => 'root',   //user name
     'password' => '******',   //password
     'tablePrefix' => 'cms_',
-    'charset' => 'utf8', 
+    'charset' => 'utf8',
 ];
 $database = new Database($config);
 //var_dump($database);

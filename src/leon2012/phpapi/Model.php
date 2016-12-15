@@ -19,11 +19,20 @@ class Model extends BaseModel
 
     public function database()
     {
-        return self::$_globalDatabase;
+        if ($this->_database != null) {
+            return $this->_database;
+        }else{
+            return Model::getGlobalDatabase();
+        }
     }
 
     public static function setGlobalDatabase($db)
     {
         self::$_globalDatabase = $db;
+    }
+
+    public static function getGlobalDatabase()
+    {
+        return self::$_globalDatabase;
     }
 }

@@ -81,16 +81,13 @@ final class Application
     public function run()
     {
         $this->initLogger();
-        
+        $this->request = new Request();
+        $this->response = Response::create($this->getConfig('outputFormat'));
         $appPath = $this->getConfig('appPath');
         $this->setAppPath($appPath);
         $this->initModules();
-        
-        $this->request = new Request();
-        $this->response = Response::create($this->getConfig('outputFormat'));
-
         $this->initDatabase();
-
+        
         $requestMethod = strtolower($_SERVER['REQUEST_METHOD']);
         $pathInfo = '';
         if (!empty($_SERVER['PATH_INFO'])) {
@@ -168,7 +165,6 @@ final class Application
             throw new NotFoundControllerException(sprintf('controller: %s not instance %s', $controllerClass, $parentControllerName));
         }
 
-        //$reflection = $this->getControllerReflection($this->controller);
         $reflection = ReflectionManager::shareManager()->getReflection($this->controller);
         $ok = $reflection->hasMethod($this->actionName);
         if (!$ok) {
@@ -183,9 +179,7 @@ final class Application
             }
             $data = $reflection->execute($this->actionName, $args);
             $this->response->setData($data);
-
             $this->controller->afterAction();
-
         }catch(ReflectionException $e) {
             throw new ExecuteException(sprintf('controller: %s, method: %s ', $controllerClass, $this->actionName));
         }
@@ -294,25 +288,8 @@ final class Application
      */
     private function __clone()
     {
-
+        return null;
     }
-
-    /**
-     * <code>
-     * // Call the "user/admin" controller and pass parameters
-     *   $response = $this->call('modules.admin.user@profile', $arguments);
-     * </code>
-     */
-    // private function call($resource, $args = [])
-    // {
-    //     list($name, $method) = explode("@", $resource);
-    //     $method = $method.'Action';
-    //     $class = array_map('ucfirst', explode(".", $name));
-    //     $className = end($class).'Controller';
-    //     $namespace = str_replace(end($class), '', $class);
-    //     $class = '\\'.$this->getConfig('appNamespace').'\\'.implode('\\', $namespace).$className;
-    //     return call_user_func_array(new $class(), $method, $args);
-    // }
 
     /**
      *
@@ -366,15 +343,7 @@ final class Application
     {
         $newParams = [];
         $str = implode("/", $params);
-        // echo $str;
-        // $newStr = '';
-        // preg_replace_callback('~([a-z]+)/([a-z]+)~', function($matches) {
-        //     global $newStr
-        //     //print_r($matches);
-        //     $newStr .= ($matches[1].'='.$matches[2].'&');
-        // }, $str);
-        // echo $newStr;
-        preg_match_all('~([a-z]+)/([a-z]+)~', $str, $matches, PREG_SET_ORDER);
+        preg_match_all('~([a-zA-z0-9]+)/([a-zA-z0-9]+)~', $str, $matches, PREG_SET_ORDER);
         for($i=0; $i<count($matches); $i++) {
             $match = $matches[$i];
             $newParams[$match[1]] = $match[2];

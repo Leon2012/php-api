@@ -12,12 +12,12 @@ use leon2012\phpapi\orm\exceptions\CoreException;
 
 abstract class Model  
 {
-    private $_database;
-    private $_pkId;
-    private $_tableName;
-    private $_charset;
-    private $_fieldTypes;
-    private $_properties;
+    protected $_database;
+    protected $_pkId;
+    protected $_tableName;
+    protected $_charset;
+    protected $_fieldTypes;
+    protected $_properties;
 
     public function __construct($database = null)
     {
@@ -27,9 +27,6 @@ abstract class Model
         $this->setFieldTypes();
         $this->setPkId();
         $this->setTableName();
-        if (is_null($this->_database)) {
-            $this->setDatabase();    
-        }
     }
 
     public function getPkId()
@@ -45,12 +42,28 @@ abstract class Model
 
     public function one($data = null)
     {
-        
-    }
-
-    public  static function all($data = null)
-    {
-        
+        $params = [];
+        if (is_null($data)) {
+            $pkValue = $this->getPkValue();
+            $params = [$this->_pkId => $pkValue];
+        }else if (is_array($data)){
+            foreach($data as $propName => $propValue) {
+                $params[$propName] = $value;
+            } 
+        }else if (is_int($data)) {
+            $params = [$this->_pkId => $data];
+        }else if (is_string($data)) {
+            $params = [$this->_pkId => intval($data)];
+        }
+        $results = $this->database()->one($this->_tableName, $params, [], true);
+        if ($results === false) {
+            return false;
+        }else{
+            foreach($results as $k => $v) {
+                $this->$k = $v;
+            }
+            return true;
+        } 
     }
 
     public function create()
@@ -87,7 +100,7 @@ abstract class Model
         $sql .= $fieldStr;
         $pkValue = $this->getPkValue();
         $sql .= " WHERE `".$this->_pkId."` = ".$pkValue;
-        return $this->_database->exec($sql);
+        return $this->database()->exec($sql);
     }
 
     public function delete($data = null)
@@ -116,7 +129,7 @@ abstract class Model
             $where = " 1=1 ";
         }
         $sql .= $where;
-        return $this->_database->exec($sql);
+        return $this->database()->exec($sql);
     }
 
     public function insert($data = null)
@@ -151,17 +164,17 @@ abstract class Model
         $sql .= ' VALUES ( ';
         $sql .= $valueStr;
         $sql .= ' ) ';
-        return $this->_database->exec($sql);
+        return $this->database()->exec($sql);
     }
 
     public function getTablePrefix()
     {
-        return $this->_database->getConfig('tablePrefix');
+        return $this->database()->getConfig('tablePrefix');
     }
 
     public function getDatabaseCharset()
     {
-        $charset = $this->_database->getConfig('charset');
+        $charset = $this->database()->getConfig('charset');
         if (isset($charset) && !empty($charset)) {
             $this->_charset = strtoupper($charset);
         }
@@ -242,7 +255,7 @@ abstract class Model
         $formatValue = "";
         switch($propType) {
             case Reflection::IS_STRING:
-                $formatValue = $this->_database->quote($value); 
+                $formatValue = $this->database()->quote($value); 
             break;
             case Reflection::IS_INT:
                 $formatValue = $value;

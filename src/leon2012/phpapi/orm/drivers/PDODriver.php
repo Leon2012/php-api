@@ -57,15 +57,26 @@ class PDODriver extends Base implements DriverInterface
         }
     }
 
-    public function one($sql, array $params = array(), $assoc = false)
+    public function one($tableName, array $params = [], array $fields = [], $assoc = false)
     {
-        $this->setLastSql($sql);
+        $sth = $this->buildStatement($tableName, $params, $fields);
+        if ($assoc) {
+            $result = $sth->fetch(\PDO::FETCH_ASSOC);
+        }else{
+            $result = $sth->fetch(\PDO::FETCH_OBJ);
+        }
+        return $result;
     }
 
-    public function all($sql, array $params = array(), $assoc = false)
+    public function all($tableName, array $params = [], array $fields = [], $assoc = false)
     {
-        $this->setLastSql($sql);
-        
+        $sth = $this->buildStatement($tableName, $params, $fields);
+        if ($assoc) {
+            $result = $sth->fetchAll(\PDO::FETCH_ASSOC);
+        }else{
+            $result = $sth->fetchAll(\PDO::FETCH_OBJ);
+        }
+        return $result;
     }
 
     public function getLastInsertId()
@@ -103,5 +114,34 @@ class PDODriver extends Base implements DriverInterface
     public function rollBack()
     {
         return $this->_connection->rollBack();
+    }
+
+    private function buildStatement($tableName, array $params = [], array $fields = [])
+    {
+        $sql = '';
+        $sql .= ' SELECT ';
+        if (!empty($fields)) {
+            $sq .= implode(",", $fields);
+        }else{
+            $sql .= " * ";
+        }
+        $sql .= ' FROM '.$tableName . ' WHERE ';
+        $values = [];
+        if (!empty($params)) {
+            $keys = [];
+            foreach($params as $k => $v) {
+                $kk = ':'.$k;
+                $keys[] = $k.' = '.$kk;
+                $values[$kk] = $v;
+            }
+            $where = implode(" AND ", $keys);
+            $sql .= $where;
+        }else{
+            $sql .= ' 1=1 ';
+        }
+        $this->setLastSql($sql);
+        $sth = $this->_connection->prepare($sql, array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
+        $sth->execute($values);
+        return $sth;
     }
 }

@@ -171,6 +171,7 @@ abstract class Response
      */
     public static function create($format = self::FORMAT_JSON)
     {
+
         $instance = null;
         switch($format){
             case self::FORMAT_JSON:

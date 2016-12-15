@@ -14,8 +14,8 @@ interface DriverInterface
     public function close();
     public function exec($sql);
     public function query($sql, $assoc = false);
-    public function one($sql, array $params = array(), $assoc = false);
-    public function all($sql, array $params = array(), $assoc = false);
+    public function one($tableName, array $params = [], array $fields = [], $assoc = false);
+    public function all($tableName, array $params = [], array $fields = [], $assoc = false);
     public function getLastInsertId();
     public function getLastError();
     public function getLastSql();

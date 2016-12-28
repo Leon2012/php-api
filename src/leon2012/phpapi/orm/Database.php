@@ -7,8 +7,10 @@
  */
 
 namespace leon2012\phpapi\orm;
+
 use leon2012\phpapi\orm\exceptions\InvalidConfigException;
 use leon2012\phpapi\exceptions\NotFoundMethodException;
+
 class Database
 {
 

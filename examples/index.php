@@ -36,7 +36,7 @@ $config = [
         'port' => '3306',       //mysql port
         'name' => '3db',       //database name
         'username' => 'root',   //user name
-        'password' => '******',   //password
+        'password' => 'abcd1234',   //password
         'tablePrefix' => 'cms_',
         'charset' => 'utf8',
     ],

@@ -61,7 +61,6 @@ final class Application
             $instance = new Application();
             self::$_instance = $instance;
         }
-
         return self::$_instance;
     }
 

@@ -8,7 +8,7 @@
 namespace leon2012\phpapi;
 use leon2012\phpapi\exceptions\CoreException;
 
-class ReflectionManager
+final class ReflectionManager
 {
     private $_cache;
     private static $_instance = null;

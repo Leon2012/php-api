@@ -12,8 +12,6 @@ class ArrayCollection extends \leon2012\phpapi\Collection
 
     public function __construct($array = [])
     {
-        foreach ($array as $name => $value) {
-            $this->add($name, $value);
-        }
+    	$this->fromArray($array);
     }
 }

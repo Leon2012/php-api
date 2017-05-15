@@ -26,9 +26,7 @@ class HeaderCollection extends \leon2012\phpapi\Collection
                 }
             }
         }
-        foreach ($headers as $name => $value) {
-            $this->add($name, $value);
-        }
+        $this->fromArray($headers);
     }
 
 }

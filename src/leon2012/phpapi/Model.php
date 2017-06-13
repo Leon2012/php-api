@@ -11,8 +11,6 @@ use leon2012\phpapi\orm\Model as BaseModel;
 
 class Model extends BaseModel
 {
-    protected static $_globalDatabase = null; //global database
-
     public function __construct($database = null)
     {
         parent::__construct($database);
@@ -23,17 +21,7 @@ class Model extends BaseModel
         if ($this->_database != null) {
             return $this->_database;
         } else {
-            return Model::getGlobalDatabase();
+            return Application::getInstance()->database;
         }
-    }
-
-    public static function setGlobalDatabase($db)
-    {
-        self::$_globalDatabase = $db;
-    }
-
-    public static function getGlobalDatabase()
-    {
-        return self::$_globalDatabase;
     }
 }

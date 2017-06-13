@@ -1,12 +1,16 @@
 <?php
 namespace api\controllers;
 
+use PHPAPI;
+
 class SiteController extends \leon2012\phpapi\Controller
 {
     private $_a;
 
     public function testAction()
     {
+        print_r(PHPAPI::$app);
+        exit;
         return $this->application->request->post('name', 'leon');
     }
 

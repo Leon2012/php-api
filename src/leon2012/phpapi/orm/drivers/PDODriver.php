@@ -48,7 +48,7 @@ class PDODriver extends Base implements DriverInterface
 
         return $this->_connection->exec($sql);
     }
-
+    
     public function query($sql, $assoc = false)
     {
         $this->setLastSql($sql);

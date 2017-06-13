@@ -15,6 +15,7 @@ define('APP_PATH',realpath(dirname(__FILE__)));
 require_once __DIR__."/../vendor/autoload.php";
 use leon2012\phpapi\Application;
 use leon2012\phpapi\logs\FileLogger;
+
 $config = [
     'id' => 'api',
     'appPath' => APP_PATH,
@@ -29,17 +30,17 @@ $config = [
         'level'  => 1, //info
         'file'   => '/tmp/out.log',
     ],
-    // 'database' => [
-    //     'driver' => 'pdo',  //support driver
-    //     'type' => 'mysql',  //only support mysql
-    //     'host' => '127.0.0.1',       //mysql host
-    //     'port' => '3306',       //mysql port
-    //     'name' => '3db',       //database name
-    //     'username' => 'root',   //user name
-    //     'password' => 'abcd1234',   //password
-    //     'tablePrefix' => 'cms_',
-    //     'charset' => 'utf8',
-    // ],
+    'database' => [
+        'driver' => 'pdo',  //support driver
+        'type' => 'mysql',  //only support mysql
+        'host' => '127.0.0.1',       //mysql host
+        'port' => '3306',       //mysql port
+        'name' => '3db',       //database name
+        'username' => 'root',   //user name
+        'password' => 'abcd1234',   //password
+        'tablePrefix' => 'cms_',
+        'charset' => 'utf8',
+    ],
 ];
 $app = Application::getInstance();
 try {

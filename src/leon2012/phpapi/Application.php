@@ -308,7 +308,6 @@ final class Application
         $dbConfig = $this->getConfig('database');
         if ($dbConfig) {
             $this->database = new Database($dbConfig);
-            Model::setGlobalDatabase($this->database);
         }
     }
 

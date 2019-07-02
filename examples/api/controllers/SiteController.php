@@ -9,8 +9,8 @@ class SiteController extends \leon2012\phpapi\Controller
 
     public function testAction()
     {
-        print_r(PHPAPI::$app);
-        exit;
+        // print_r(PHPAPI::$app);
+        // exit;
         return $this->application->request->post('name', 'leon');
     }
 

@@ -25,17 +25,13 @@ final class Application
     private $_data;
     private $_config;
     private $_loader;
-    private $_modules;
     private $_errorHandler;
     //private $_controllerReflectionCache;
     public $request;
     public $response;
-    public $moduleName;
-    public $moduleClass;
-    public $methodName;
-    public $actionName;
-    public $controllerName;
-    public $controllerClass;
+    public $uri;
+    public $router;
+
     public $controller;
     public $logger;
     public $database;
@@ -48,7 +44,6 @@ final class Application
     private function __construct()
     {
         $this->_data = [];
-        $this->_modules = [];
         $this->_loader = new Autoloader();
     }
 
@@ -71,108 +66,44 @@ final class Application
      */
     public function run()
     {
+        $appPath = $this->getConfig('appPath');
+        $this->setAppPath($appPath);
+
         $this->initLogger();
         $this->request = new Request();
         $this->response = Response::create($this->getConfig('outputFormat'));
-        $appPath = $this->getConfig('appPath');
-        $this->setAppPath($appPath);
-        $this->initModules();
         $this->initDatabase();
-
-        $requestMethod = strtolower($_SERVER['REQUEST_METHOD']);
-        $pathInfo = '';
-        if (!empty($_SERVER['PATH_INFO'])) {
-            $pathInfo = $_SERVER['PATH_INFO'];
-        } elseif (!empty($_SERVER['ORIG_PATH_INFO']) && $_SERVER['ORIG_PATH_INFO'] !== '/index.php') {
-            $pathInfo = $_SERVER['ORIG_PATH_INFO'];
-        } else {
-            if (!empty($_SERVER['REQUEST_URI'])) {
-                $pathInfo = (strpos($_SERVER['REQUEST_URI'], '?') > 0)? strstr($_SERVER['REQUEST_URI'], '?', true) : $_SERVER['REQUEST_URI'];
-            }
-        }
-        if ($pathInfo[0] == '/') {
-            $pathInfo = substr($pathInfo, 1);
-        }
-
-        $this->request->setPathInfo($pathInfo);
-
-        if (empty($pathInfo)) {
+        $this->uri = new URI(URI::PROTOCOL_REQUEST_URI);
+        $this->request->setPathInfo($this->uri->getUrl());
+        $urlArr = $this->uri->getSegments();
+        if (empty($urlArr)) {
             $urlArr = explode('/', $this->getConfig('defaultRoute'));
-        } else {
-            $urlArr = explode('/', $pathInfo);
         }
-        $moduleName = '';
-        $controllerName = '';
-        $methodName = '';
-        $controllerClass = '';
-        $params = [];
-        if (isset($this->_modules[$urlArr[0]])) {//module.controller.method
-            $moduleName = $urlArr[0];
-            $moduleClass = $this->_modules[$moduleName];
-            $moduleDefaultRoute = $moduleClass->defaultRoute;
-            $moduleDefaultRouteArr = explode('/', $moduleDefaultRoute);
-            $moduleDefaultController = $moduleDefaultRouteArr[0];
-            if (count($moduleDefaultRouteArr) > 1) {
-                $moduleDefaultMethod = $moduleDefaultRouteArr[1];
-            } else {
-                $moduleDefaultMethod = 'index';
-            }
-            $controllerName = !empty($urlArr[1])?$urlArr[1]:$moduleDefaultController;
-            $methodName = !empty($urlArr[2])?$urlArr[2]:$moduleDefaultMethod;
-            if (count($urlArr) > 3) {
-                $params = array_slice($urlArr, 3);
-            }
-        } else {
-            $controllerName = $urlArr[0];
-            $methodName = !empty($urlArr[1])?$urlArr[1]:'index';
-            if (count($urlArr) > 2) {
-                $params = array_slice($urlArr, 2);
-            }
+        $this->router = new Router($urlArr);
+        if (!class_exists($this->router->controllerClass)) {
+            throw new NotFoundControllerException('controller: ' . $this->router->controllerClass);
         }
 
-        if (empty($moduleName)) {
-            $moduleClass = null;
-            $controllerClass = $this->getConfig('controllerNamespace').'\\'.$controllerName.'Controller';
-        } else {
-            $moduleClass = $this->_modules[$moduleName];
-            $controllerClass = $moduleClass->controllerNamespace.'\\'.$controllerName.'Controller';
-        }
-        if (!class_exists($controllerClass)) {
-            throw new NotFoundControllerException('controller: ' . $controllerClass);
-        }
-        $this->moduleClass = $moduleClass;
-        $this->moduleName = $moduleName;
-        $this->controllerName = $controllerName;
-        $this->controllerClass = $controllerClass;
-        $this->methodName = $methodName;
-        $this->actionName = $methodName.'Action';
-
-        $this->controller = new $controllerClass();
+        $this->controller = new $this->router->controllerClass();
         $this->controller->setApplication($this);
-        $this->controller->setController($this->controllerClass);
-        $this->controller->setId($controllerName);
+        $this->controller->setController($this->router->controllerClass);
+        $this->controller->setId($this->router->controllerName);
         $parentControllerName = '\\leon2012\\phpapi\\Controller';
         if (!is_subclass_of($this->controller, $parentControllerName)) {
-            throw new NotFoundControllerException(sprintf('controller: %s not instance %s', $controllerClass, $parentControllerName));
+            throw new NotFoundControllerException(sprintf('controller: %s not instance %s', $this->router->controllerClass, $parentControllerName));
         }
-
         $reflection = ReflectionManager::shareManager()->getReflection($this->controller);
-        $ok = $reflection->hasMethod($this->actionName);
+        $ok = $reflection->hasMethod($this->router->actionName);
         if (!$ok) {
-            throw new NotFoundMethodException(sprintf('controller: %s, method: %s ', $controllerClass, $this->actionName));
+            throw new NotFoundMethodException(sprintf('controller: %s, method: %s ', $this->router->controllerClass, $this->router->actionName));
         }
         try {
             $this->controller->beforeAction();
-            if (count($params) > 0) {
-                $args = $this->convParams($params);
-            } else {
-                $args = [];
-            }
-            $data = $reflection->execute($this->actionName, $args);
+            $data = $reflection->execute($this->router->actionName, $this->router->params);
             $this->response->setData($data);
             $this->controller->afterAction();
         } catch (ReflectionException $e) {
-            throw new ExecuteException(sprintf('controller: %s, method: %s ', $controllerClass, $this->actionName));
+            throw new ExecuteException(sprintf('controller: %s, method: %s ', $this->router->controllerClass, $this->router->actionName));
         }
     }
 
@@ -286,23 +217,6 @@ final class Application
         return null;
     }
 
-    /**
-     *
-     */
-    private function initModules()
-    {
-        $modules = $this->getConfig('modules');
-        if (is_array($modules)) {
-            foreach ($modules as $name => $class) {
-                $classFile = '\\'.$class;
-                $obj = new $classFile();
-                if ($obj) {
-                    $this->_modules[$name] = $obj;
-                }
-            }
-        }
-    }
-
     private function initDatabase()
     {
         $dbConfig = $this->getConfig('database');
@@ -327,23 +241,6 @@ final class Application
             $this->_errorHandler->registerErrorHandler();
         }
 
-    }
-
-    /**
-     * @param $params
-     * @return array
-     */
-    private function convParams($params)
-    {
-        $newParams = [];
-        $str = implode("/", $params);
-        preg_match_all('~([a-zA-z0-9]+)/([a-zA-z0-9]+)~', $str, $matches, PREG_SET_ORDER);
-        for ($i=0; $i<count($matches); $i++) {
-            $match = $matches[$i];
-            $newParams[$match[1]] = $match[2];
-        }
-
-        return $newParams;
     }
 
     // private function getControllerReflection($controller)

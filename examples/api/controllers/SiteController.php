@@ -11,7 +11,7 @@ class SiteController extends \leon2012\phpapi\Controller
     {
         // print_r(PHPAPI::$app);
         // exit;
-        return $this->application->request->post('name', 'leon');
+        return $this->application->request->get('name', 'leon');
     }
 
     public function indexAction($a, $c)

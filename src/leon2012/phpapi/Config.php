@@ -21,6 +21,7 @@ class Config
     private $_outputFormat;
     private $_database;
     private $_log;
+    private $_charset;
     /**
      * init object
      * @param array $config [description]
@@ -47,6 +48,7 @@ class Config
         $this->_database = isset($arr['database'])?$arr['database']:[];
         $this->_log = isset($arr['log'])?$arr['log']:[];
         $this->_data = $arr;
+        $this->_charset = isset($arr['charset'])?$arr['charset']:'utf-8';
     }
 
     /**

@@ -72,7 +72,8 @@ class Router
         $this->methodName = $methodName;
 		$this->actionName = $methodName.'Action';
 		if (count($params) > 0) {
-			$this->params = $this->convParams($params);
+            $this->params = $this->convParams($params);
+            $_GET = array_merge($_GET, $this->params);
 		}
 	}
 

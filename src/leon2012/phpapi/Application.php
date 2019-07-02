@@ -66,15 +66,12 @@ final class Application
      */
     public function run()
     {
+        $this->setCharset();
         $appPath = $this->getConfig('appPath');
         $this->setAppPath($appPath);
-
         $this->initLogger();
-        $this->request = new Request();
-        $this->response = Response::create($this->getConfig('outputFormat'));
-        $this->initDatabase();
         $this->uri = new URI(URI::PROTOCOL_REQUEST_URI);
-        $this->request->setPathInfo($this->uri->getUrl());
+        
         $urlArr = $this->uri->getSegments();
         if (empty($urlArr)) {
             $urlArr = explode('/', $this->getConfig('defaultRoute'));
@@ -83,6 +80,10 @@ final class Application
         if (!class_exists($this->router->controllerClass)) {
             throw new NotFoundControllerException('controller: ' . $this->router->controllerClass);
         }
+        $this->request = new Request();
+        $this->request->setPathInfo($this->uri->getUrl());
+        $this->response = Response::create($this->getConfig('outputFormat'));
+        $this->initDatabase();
 
         $this->controller = new $this->router->controllerClass();
         $this->controller->setApplication($this);
@@ -240,8 +241,22 @@ final class Application
             $this->_errorHandler->registerExceptionHandler();
             $this->_errorHandler->registerErrorHandler();
         }
-
     }
+
+    private function setCharset()
+    {
+        $charset = strtoupper($this->getConfig('charset'));
+        ini_set('default_charset', $charset);
+        if (extension_loaded('mbstring')){
+            @ini_set('mbstring.internal_encoding', $charset);
+            mb_substitute_character('none');
+        }
+        if (extension_loaded('iconv')){
+            @ini_set('iconv.internal_encoding', $charset);
+        }
+        ini_set('php.internal_encoding', $charset);
+    }
+
 
     // private function getControllerReflection($controller)
     // {

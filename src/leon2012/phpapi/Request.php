@@ -29,6 +29,7 @@ class Request
      */
     public function __construct()
     {
+        $this->sanitizeGlobals();
         $this->_headers = new HeaderCollection();
         $this->_cookies = new ArrayCollection($_COOKIE);
         $this->_get = new ArrayCollection($_GET);
@@ -252,5 +253,49 @@ class Request
     {
         return isset($_SERVER['REMOTE_HOST']) ? $_SERVER['REMOTE_HOST'] : null;
     }
+    
+    private function sanitizeGlobals()
+    {
+        if (is_array($_GET)) {
+            foreach($_GET as $key => $val) {
+                $_GET[$this->cleanInputKey($key)] = $this->cleanInputValue($val);
+            }
+        }
+        if (is_array($_POST)) {
+            foreach($_POST as $key => $val) {
+                $_POST[$this->cleanInputKey($key)] = $this->cleanInputValue($val);
+            }
+        }
+        $_SERVER['PHP_SELF'] = strip_tags($_SERVER['PHP_SELF']);
+    }
 
+    private function cleanInputKey($str, $fatal = TRUE)
+	{
+		if ( ! preg_match('/^[a-z0-9:_\/|-]+$/i', $str)){
+			if ($fatal === TRUE){
+				return FALSE;
+			}else{
+				set_status_header(503);
+				echo 'Disallowed Key Characters.';
+				exit(7); // EXIT_USER_INPUT
+			}
+		}
+		return $str;
+    }
+    
+    private function cleanInputValue($str)
+	{
+		if (is_array($str)){
+			$new_array = array();
+			foreach (array_keys($str) as $key){
+				$new_array[$this->cleanInputKey($key)] = $this->cleanInputValue($str[$key]);
+			}
+			return $new_array;
+		}
+		if (get_magic_quotes_gpc()){
+			$str = stripslashes($str);
+        }
+        $str = Security::removeInvisibleCharacters($str, FALSE);
+		return $str;
+    }
 }
